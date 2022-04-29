@@ -1,15 +1,10 @@
 local packer = require('pack-config.packer')
+local util   = require('pack-config.util')
 
 local scanner
 local loader
 
 local M = {}
-
-
-M.setup = function (opts)
-  scanner = require('pack-config.scanner').with_default(opts and opts.scanner, true)
-  loader = require('pack-config.loader').with_default(opts and opts.loader, true)
-end
 
 
 local to_absolute_path = function (root_path, relative_paths)
@@ -33,7 +28,8 @@ local to_lua_path = function (root_path, absolute_paths)
 end
 
 
-M.config_packs = function(scan_paths)
+-- TODO: 支持完整路径
+local load = function(scan_paths)
   -- TODO:  use plenary.path refact the code
   local root_path = vim.fn.stdpath('config') .. '/'
 
@@ -45,8 +41,7 @@ M.config_packs = function(scan_paths)
   -- scan lua file
   scan_paths = to_absolute_path(root_path, scan_paths)
   local pack_paths = scanner.scan(scan_paths, opts)
-  pack_paths = to_lua_path(root_path, pack_paths)
-  vim.pretty_print(pack_paths)
+  pack_paths = to_lua_path(root_path .. 'lua/', pack_paths)
 
 
   -- filter valid pack
@@ -66,5 +61,28 @@ M.config_packs = function(scan_paths)
   packer.done()
 
 end
+
+
+-- @param opts
+--  opts.scanner: scanner builtin or custom
+--  opts.scanner_opts: control the scanner init action
+--  opts.loader: loader builtin or custom
+--  opts.loader_opts: control the loader init action
+M.setup = util.fn.once(function (opts)
+  opts = util.deep_merge_opts({
+    loader_opts = {
+      auto_download = true,
+      package = nil,
+    },
+  }, opts)
+  scanner = require('pack-config.scanner').with_default(opts and opts.scanner, false)
+  loader = require('pack-config.loader').with_default(opts and opts.loader, false)
+  scanner.init(opts.scanner_opts)
+  loader.init(opts.loader_opts)
+
+  load(opts.scan_paths)
+
+end)
+
 
 return M

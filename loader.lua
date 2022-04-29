@@ -1,7 +1,7 @@
 local builtin_loaders = function()
   return {
-    require('pack-config.loader.builtin.paq'),
-    require('pack-config.loader.builtin.packer'),
+    require('pack-config.loader.paq'),
+    require('pack-config.loader.packer'),
   }
 end
 
@@ -14,7 +14,7 @@ end
 
 
 local with_default = function(loader, report_error)
-  if loader ~= nil and loader.exsit() then
+  if loader ~= nil and loader.exist() then
     return loader
   end
   local loaders = builtin_loaders()
@@ -27,6 +27,10 @@ local with_default = function(loader, report_error)
       error(string.format([[there is no pack loader available here.
         if use the builtin loader please make sure to download them before
         builtin_loaders: %s]], table.concat(loader_names, ', ')))
+    elseif loader ~= nil then
+      return loader
+    else
+      return loaders[1]
     end
   else
     return available_loaders[1]
@@ -35,10 +39,16 @@ local with_default = function(loader, report_error)
 end
 
 
-local M = {
+local M = setmetatable({
   builtin_loaders = builtin_loaders,
   available_builtin_loaders = available_builtin_loaders,
   with_default = with_default,
-}
+}, {
+  __index = function (self, k)
+    local v = require('pack-config.loader.' .. k)
+    self[k] = v
+    return v
+  end,
+})
 
 return M

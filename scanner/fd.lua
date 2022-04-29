@@ -1,9 +1,11 @@
+local util = require('pack-config.util')
+
 local M = {}
 
 
 local default_opts = {
   extension = nil,
-  pattern = '.'
+  pattern = '.',
 }
 
 
@@ -15,13 +17,20 @@ M.exist = function()
 end
 
 
+M.init = function(opts)
+  if not M.exist() then
+    error('not find fd command', vim.log.levels.ERROR)
+  end
+end
+
+
 -- @param scan_paths
 -- @param opts {}
 --  opts.extension
 --  opts.pattern
 M.scan = function(scan_paths, opts)
 
-  opts = vim.tbl_deep_extend('force', default_opts, opts)
+  opts = util.deep_merge_opts(default_opts, opts)
 
   local fd_opts = {}
   if opts.extension then
@@ -31,14 +40,12 @@ M.scan = function(scan_paths, opts)
 
   local all_result_paths = {}
   local rv
+  local n = #fd_opts
   for _, scan_path in ipairs(scan_paths) do
+    fd_opts[n + 1] = scan_path
     rv = vim.fn.system('fd ' .. table.concat(fd_opts, ' '))
     if vim.v.shell_error == 0 then
       local result_paths = vim.split(rv, '\n', {plain = true, trimempty = true})
-      result_paths = vim.tbl_map(function(path)
-        return (vim.endswith(scan_path, '/') and scan_path:sub(1, -2) or scan_path) .. path:sub(2, -1)
-      end, result_paths)
-
       all_result_paths = vim.tbl_extend('force', all_result_paths, result_paths)
     end
   end

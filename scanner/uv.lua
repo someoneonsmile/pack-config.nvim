@@ -1,5 +1,5 @@
-
-local scan = require('plenary.scandir')
+local util = require('pack-config.util')
+-- local scan = require('plenary.scandir')
 
 local M = {}
 
@@ -8,6 +8,18 @@ M.name = 'uv'
 
 M.exist = function ()
   return pcall(require, 'plenary')
+end
+
+
+M.init = function (opts)
+  if not M.exist() then
+    util.download_pack({
+      dist_dir = vim.fn.stdpath('data') .. '/site/pack/common/start/',
+      name = 'plenary',
+      path = 'nvim-lua/plenary.nvim',
+      prompt = 'Download plenary.nvim ? (y for yes)',
+    })
+  end
 end
 
 
@@ -34,7 +46,7 @@ M.scan = function (paths, opts)
     return true
   end
   for _, path in ipairs(paths) do
-    scan.scan_dir(path, walk_opts)
+    -- scan.scan_dir(path, walk_opts)
   end
   return rusult_paths
 end
