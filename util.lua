@@ -23,12 +23,38 @@ M.tbl_notempty = function(tbl)
   return not M.tbl_isempty(tbl)
 end
 
+-- reduce
+-- @param f(result, value, key)
+M.tbl_reduce = function(tbl, init, f)
+  if M.tbl_isempty(tbl) then
+    return init
+  end
+  local result = init
+  for k, v in pairs(tbl) do
+    result = f(result, v, k)
+  end
+  return result
+end
+
+-- filter and map
 M.tbl_filter_map = function(tbl, filters, maps)
   tbl = M.confirm_table(tbl)
+  if M.tbl_isempty(tbl) then
+    return tbl
+  end
   filters = M.confirm_table(filters)
   maps = M.confirm_table(maps)
-
-  return not M.tbl_isempty(tbl)
+  if M.tbl_isempty(filters) and M.tbl_isempty(maps) then
+    return tbl
+  end
+  local result = {}
+  for key, value in pairs(tbl) do
+    local pass = M.tbl_reduce(filters, true, function(r, filter) return r and filter(value, key) end)
+    if pass then
+      result[key] = M.tbl_reduce(maps, value, function(r, map) return map(r) end)
+    end
+  end
+  return result
 end
 
 M.deep_merge_opts = function(default_opts, opts)
