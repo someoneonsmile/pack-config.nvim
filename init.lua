@@ -1,21 +1,21 @@
 local packer = require('pack-config.packer')
-local util   = require('pack-config.util')
+local util = require('pack-config.util')
 
 local scanner
 local loader
 
 local M = {}
 
-
-local to_absolute_path = function (root_path, relative_paths)
+local to_absolute_path = function(root_path, relative_paths)
   if not vim.endswith(root_path, '/') then
     root_path = root_path .. '/'
   end
-  return vim.tbl_map(function(path) return root_path .. path end, relative_paths)
+  return vim.tbl_map(function(path)
+    return root_path .. path
+  end, relative_paths)
 end
 
-
-local to_lua_path = function (root_path, absolute_paths)
+local to_lua_path = function(root_path, absolute_paths)
   if not vim.endswith(root_path, '/') then
     root_path = root_path .. '/'
   end
@@ -26,7 +26,6 @@ local to_lua_path = function (root_path, absolute_paths)
     return path:gsub('%.[^.]*$', '')
   end, absolute_paths)
 end
-
 
 -- TODO: 支持完整路径
 local load = function(scan_paths)
@@ -43,7 +42,6 @@ local load = function(scan_paths)
   local pack_paths = scanner.scan(scan_paths, opts)
   pack_paths = to_lua_path(root_path .. 'lua/', pack_paths)
 
-
   -- filter valid pack
   local valid_packs = {}
   for _, pack_path in ipairs(pack_paths) do
@@ -54,21 +52,19 @@ local load = function(scan_paths)
   end
 
   -- pack istall and config
-  packer.setup({
-    loader = loader
-  })
+  packer.setup {
+    loader = loader,
+  }
   packer.regist(valid_packs)
   packer.done()
-
 end
-
 
 -- @param opts
 --  opts.scanner: scanner builtin or custom
 --  opts.scanner_opts: control the scanner init action
 --  opts.loader: loader builtin or custom
 --  opts.loader_opts: control the loader init action
-M.setup = util.fn.once(function (opts)
+M.setup = util.fn.once(function(opts)
   opts = util.deep_merge_opts({
     loader_opts = {
       auto_download = true,
@@ -81,8 +77,6 @@ M.setup = util.fn.once(function (opts)
   loader.init(opts.loader_opts)
 
   load(opts.scan_paths)
-
 end)
-
 
 return M

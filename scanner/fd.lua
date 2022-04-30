@@ -2,20 +2,16 @@ local util = require('pack-config.util')
 
 local M = {}
 
-
 local default_opts = {
   extension = nil,
   pattern = '.',
 }
 
-
 M.name = 'fd'
-
 
 M.exist = function()
   return vim.fn.executable('fd')
 end
-
 
 M.init = function(opts)
   if not M.exist() then
@@ -23,13 +19,11 @@ M.init = function(opts)
   end
 end
 
-
 -- @param scan_paths
 -- @param opts {}
 --  opts.extension
 --  opts.pattern
 M.scan = function(scan_paths, opts)
-
   opts = util.deep_merge_opts(default_opts, opts)
 
   local fd_opts = {}
@@ -45,7 +39,7 @@ M.scan = function(scan_paths, opts)
     fd_opts[n + 1] = scan_path
     rv = vim.fn.system('fd ' .. table.concat(fd_opts, ' '))
     if vim.v.shell_error == 0 then
-      local result_paths = vim.split(rv, '\n', {plain = true, trimempty = true})
+      local result_paths = vim.split(rv, '\n', { plain = true, trimempty = true })
       all_result_paths = vim.tbl_extend('force', all_result_paths, result_paths)
     end
   end
@@ -53,10 +47,8 @@ M.scan = function(scan_paths, opts)
   return all_result_paths
 end
 
-
 M.scan_async = function(scan_paths, opts)
   error('not support async now, please use scan', vim.log.levels.ERROR)
 end
-
 
 return M
