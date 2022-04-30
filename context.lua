@@ -1,9 +1,7 @@
 local M = {}
 
-
 -- regist context to here
 local contexts = {}
-
 
 -- ----------------------------------------------------------------------
 --    - regist the context to contexts and return the context -
@@ -23,7 +21,7 @@ function M:new(name, o)
 end
 
 local default_opts = {
-  override = false
+  override = false,
 }
 
 -- self:set
@@ -41,22 +39,17 @@ function M:set(key, value, opts)
   return true
 end
 
-
 -- self:get
 function M:get(key)
   return self[key]
 end
 
-
 -- global context
 M.g = M:new {}
-
 
 -- get context
 M.get_context = function(name)
   return contexts[name]
 end
 
-
 return M
-

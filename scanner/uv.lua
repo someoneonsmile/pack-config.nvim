@@ -5,31 +5,27 @@ local M = {}
 
 M.name = 'uv'
 
-
-M.exist = function ()
+M.exist = function()
   return pcall(require, 'plenary')
 end
 
-
-M.init = function (opts)
+M.init = function(opts)
   if not M.exist() then
-    util.download_pack({
+    util.download_pack {
       dist_dir = vim.fn.stdpath('data') .. '/site/pack/common/start/',
       name = 'plenary',
       path = 'nvim-lua/plenary.nvim',
       prompt = 'Download plenary.nvim ? (y for yes)',
-    })
+    }
   end
 end
 
-
 local default_opts = {
   extension = nil,
-  pattern = '.'
+  pattern = '.',
 }
 
-
-M.scan = function (paths, opts)
+M.scan = function(paths, opts)
   opts = vim.tbl_deep_extend('force', default_opts, opts)
 
   local walk_opts = {}
@@ -50,7 +46,6 @@ M.scan = function (paths, opts)
   end
   return rusult_paths
 end
-
 
 M.scan_async = function(paths, opts)
   opts = vim.tbl_deep_extend('force', default_opts, opts)

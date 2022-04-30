@@ -5,7 +5,6 @@ local M = {}
 
 M.name = 'packer'
 
-
 M.exist = function()
   return pcall(require, 'packer')
 end
@@ -16,20 +15,22 @@ local cfg = {
   package = nil,
 }
 
-M.init = fn.once(function (opts)
-
+M.init = fn.once(function(opts)
   cfg = util.deep_merge_opts(cfg, opts)
 
   if not M.exist() then
     if cfg.auto_download then
-      assert(util.download_pack({
-        dist_dir = vim.fn.stdpath('data') .. '/site/pack/init/start/',
-        name = 'packer',
-        path = 'wbthomason/packer.nvim',
-        prompt = 'Download packer.nvim ? (y for yes)',
-      }), 'Download packer.nvim fail')
+      assert(
+        util.download_pack {
+          dist_dir = vim.fn.stdpath('data') .. '/site/pack/init/start/',
+          name = 'packer',
+          path = 'wbthomason/packer.nvim',
+          prompt = 'Download packer.nvim ? (y for yes)',
+        },
+        'Download packer.nvim fail'
+      )
 
-      vim.cmd [[qa]]
+      vim.cmd([[qa]])
     else
       error('not find packer.nvim', vim.log.levels.ERROR)
     end
@@ -42,11 +43,10 @@ M.init = fn.once(function (opts)
   end
 
   packer.reset()
-  packer.init({
-    plugin_package = cfg.package
-  })
-
-end, {notify = vim.log.levels.INFO})
+  packer.init {
+    plugin_package = cfg.package,
+  }
+end, { notify = vim.log.levels.INFO })
 
 -- @param pack
 --   {
@@ -72,7 +72,6 @@ local transform = function(pack)
   }
 end
 
-
 -- @param packs table
 --  pack = {'', as = '', ft = {}, opt = true, run = function() end}
 M.load = function(packs)
@@ -84,7 +83,7 @@ M.load = function(packs)
   packs = packs or {}
 
   if cfg.pack_self then
-    table.insert(packs, {'wbthomason/packer.nvim'})
+    table.insert(packs, { 'wbthomason/packer.nvim' })
   end
 
   packer.startup(function(use)

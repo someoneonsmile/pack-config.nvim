@@ -13,32 +13,47 @@ local configs = {}
 local deprecateds = {}
 
 -- 解析依赖
-local function parse_rely (pack_resources)
+local function parse_rely(pack_resources)
   local results = {}
   if util.tbl_isempty(pack_resources) then
     return results
   end
   for _, pack_resource in pairs(pack_resources) do
     if util.tbl_notempty(pack_resource.rely) then
-      vim.list_extend(results, parse_rely(vim.tbl_flatten(vim.tbl_map(function(it) return it.rely end, vim.tbl_filter(function(it) return util.tbl_notempty(it.rely) end, pack_resource.rely)))))
-      vim.list_extend(results, vim.tbl_map(function(it) return util.string_or_table(it) end, pack_resource.rely))
+      vim.list_extend(
+        results,
+        parse_rely(vim.tbl_flatten(vim.tbl_map(
+          function(it)
+            return it.rely
+          end,
+          vim.tbl_filter(function(it)
+            return util.tbl_notempty(it.rely)
+          end, pack_resource.rely)
+        )))
+      )
+      vim.list_extend(
+        results,
+        vim.tbl_map(function(it)
+          return util.string_or_table(it)
+        end, pack_resource.rely)
+      )
     end
   end
   return results
 end
 
-
 M.is_pack = function(pack)
-  return pack['is_pack'] and type(pack['resources']) == "function" and type(pack['setup']) == "function" and type(pack['config']) == "function"
+  return pack['is_pack']
+    and type(pack['resources']) == 'function'
+    and type(pack['setup']) == 'function'
+    and type(pack['config']) == 'function'
 end
-
 
 -- 启动设置
 M.setup = function(opts)
   loader = opts.loader
   assert(loader ~= nil, 'please config the loader')
 end
-
 
 -- 注册插件
 M.regist = function(packs)
@@ -65,7 +80,10 @@ local deprecated_tip = function(items)
     local path = fn.first(v)
     local deprecated_config = deprecateds[path]
     if deprecated_config then
-      util.list_extend(tips, string.fmt('%s is deprecated, replace with %s', deprecated_config[1], deprecated_config.replace_with))
+      util.list_extend(
+        tips,
+        string.fmt('%s is deprecated, replace with %s', deprecated_config[1], deprecated_config.replace_with)
+      )
     end
   end
 
@@ -93,6 +111,5 @@ M.done = function()
     end
   end
 end
-
 
 return M

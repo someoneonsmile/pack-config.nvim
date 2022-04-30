@@ -18,7 +18,6 @@ M.tbl_isempty = function(tbl)
   return tbl == nil or vim.tbl_isempty(tbl)
 end
 
-
 M.tbl_notempty = function(tbl)
   return not M.tbl_isempty(tbl)
 end
@@ -49,9 +48,13 @@ M.tbl_filter_map = function(tbl, filters, maps)
   end
   local result = {}
   for key, value in pairs(tbl) do
-    local pass = M.tbl_reduce(filters, true, function(r, filter) return r and filter(value, key) end)
+    local pass = M.tbl_reduce(filters, true, function(r, filter)
+      return r and filter(value, key)
+    end)
     if pass then
-      result[key] = M.tbl_reduce(maps, value, function(r, map) return map(r) end)
+      result[key] = M.tbl_reduce(maps, value, function(r, map)
+        return map(r)
+      end)
     end
   end
   return result
@@ -63,23 +66,19 @@ M.deep_merge_opts = function(default_opts, opts)
   return vim.tbl_deep_extend('force', default_opts, opts)
 end
 
-
 M.merge_opts = function(default_opts, opts)
   default_opts = default_opts or {}
   opts = opts or {}
   return vim.tbl_extend('force', default_opts, opts)
 end
 
-
 M.tbl_force_extend = function(...)
-  return vim.tbl_extend('force', M.fn.with_default({})(...))
+  return vim.tbl_extend('force', M.fn.with_default {}(...))
 end
-
 
 M.tbl_force_deep_extend = function(...)
-  return vim.tbl_deep_extend('force', M.with_default({})(...))
+  return vim.tbl_deep_extend('force', M.with_default {}(...))
 end
-
 
 M.confirm_table = function(tbl)
   if type(tbl) == 'nil' or type(tbl) == 'table' then
@@ -87,7 +86,6 @@ M.confirm_table = function(tbl)
   end
   return { tbl }
 end
-
 
 M.function_or_table = function(tbl, error_arg_name)
   if type(tbl) == 'function' then
@@ -102,7 +100,6 @@ M.function_or_table = function(tbl, error_arg_name)
   return tbl
 end
 
-
 M.string_or_table = function(tbl, error_arg_name)
   if type(tbl) == 'string' then
     return { tbl }
@@ -116,13 +113,12 @@ M.string_or_table = function(tbl, error_arg_name)
   return tbl
 end
 
-
 -- ----------------------------------------------------------------------
 --    - list op -
 -- ----------------------------------------------------------------------
 
 M.list_extend = function(dst, ...)
-  for _, src in pairs({ ... }) do
+  for _, src in pairs { ... } do
     vim.list_extend(dst, src)
   end
   return dst
@@ -140,7 +136,6 @@ M.list_distinct = function(key_extractor, list)
   end
   return result
 end
-
 
 M.list_to_map = function(list, key_extractor, value_extractor)
   if list == nil then
@@ -165,12 +160,10 @@ M.filter_nil = function(...)
   return M.fn.unpack(vim.tbl_filter(M.fn.not_nil, { ... }))
 end
 
-
 M.answer = function(question)
   local answer = vim.fn.input(question)
   return answer == 'y' or answer == 'yes'
 end
-
 
 -- ----------------------------------------------------------------------
 --    - download -
@@ -196,7 +189,6 @@ M.download_pack = function(pack)
   end
   return false
 end
-
 
 setmetatable(M, {
   __index = function(self, k)
