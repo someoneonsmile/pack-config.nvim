@@ -16,21 +16,23 @@ local default_config = {
   -- Name of the plugin. Prepended to log messages
   plugin = "pack-config",
 
-  -- Should print the output to neovim while running
-  -- values: 'sync','async',false
-  use_console = "async",
-
   -- Should highlighting be used in console (using echohl)
   highlights = true,
 
-  -- Should write to a file
-  use_file = true,
+  info_level = 2,
 
-  -- Should write to the quickfix list
-  use_quickfix = false,
-
-  -- Any messages above this level will be logged.
-  level = p_debug and "debug" or "info",
+  endpoint = {
+    use_console = {
+      enable = true,
+      level = "info",
+      async = true
+    },
+    use_file = {
+      enable = true,
+      level = 'debug'
+    },
+    use_quickfix = false,
+  },
 
   -- Level configuration
   modes = {
@@ -46,67 +48,54 @@ local default_config = {
   float_precision = 0.01,
 }
 
+
 -- {{{ NO NEED TO CHANGE
-local log = {}
+local Log = {}
 
 local unpack = unpack or table.unpack
 
-log.new = function(config, standalone)
-  config = vim.tbl_deep_extend("force", default_config, config)
 
-  local outfile = string.format("%s/%s.log", vim.fn.stdpath("cache"), config.plugin)
+local round = function(x, increment)
+  increment = increment or 1
+  x = x / increment
+  return (x > 0 and math.floor(x + 0.5) or math.ceil(x - 0.5)) * increment
+end
 
-  local obj
-  if standalone then
-    obj = log
-  else
-    obj = config
-  end
+local make_string = function(config, ...)
+  local t = {}
+  for i = 1, select("#", ...) do
+    local x = select(i, ...)
 
-  local levels = {}
-  for i, v in ipairs(config.modes) do
-    levels[v.name] = i
-  end
-
-  local round = function(x, increment)
-    increment = increment or 1
-    x = x / increment
-    return (x > 0 and math.floor(x + 0.5) or math.ceil(x - 0.5)) * increment
-  end
-
-  local make_string = function(...)
-    local t = {}
-    for i = 1, select("#", ...) do
-      local x = select(i, ...)
-
-      if type(x) == "number" and config.float_precision then
-        x = tostring(round(x, config.float_precision))
-      elseif type(x) == "table" then
-        x = vim.inspect(x)
-      else
-        x = tostring(x)
-      end
-
-      t[#t + 1] = x
+    if type(x) == "number" and config.float_precision then
+      x = tostring(round(x, config.float_precision))
+    elseif type(x) == "table" then
+      x = vim.inspect(x)
+    else
+      x = tostring(x)
     end
-    return table.concat(t, " ")
+
+    t[#t + 1] = x
   end
+  return table.concat(t, " ")
+end
 
-  local log_at_level = function(level, level_config, message_maker, ...)
-    -- Return early if we're below the config.level
-    if level < levels[config.level] then
-      return
-    end
-    local nameupper = level_config.name:upper()
 
-    local msg = message_maker(...)
-    local info = debug.getinfo(config.info_level or 2, "Sl")
-    local lineinfo = info.short_src .. ":" .. info.currentline
+-- ----------------------------------------------------------------------
+--    - endpoint deal logic -
+-- ----------------------------------------------------------------------
 
-    -- Output to console
-    if config.use_console then
+local endpoint_handles = {
+  use_console = {
+    support = function(config, log_level)
+      local endpoint_config = config.endpoint.use_console
+      return endpoint_config and endpoint_config.enable and log_level >= config.levels[endpoint_config.level]
+    end,
+    handle = function(config, level_config, msg, lineinfo, info)
+
+      -- log to console function
+      --
       local log_to_console = function()
-        local console_string = string.format("[%-6s%s] %s: %s", nameupper, os.date "%H:%M:%S", lineinfo, msg)
+        local console_string = string.format("[%-6s%s] %s: %s", level_config.name:upper(), os.date "%H:%M:%S", lineinfo, msg)
 
         if config.highlights and level_config.hl then
           vim.cmd(string.format("echohl %s", level_config.hl))
@@ -126,24 +115,36 @@ log.new = function(config, standalone)
           vim.cmd "echohl NONE"
         end
       end
-      if config.use_console == "sync" and not vim.in_fast_event() then
+
+      -- deal for async flag
+      if not config.endpoint.use_console.async and not vim.in_fast_event() then
         log_to_console()
       else
         vim.schedule(log_to_console)
       end
-    end
 
-    -- Output to log file
-    if config.use_file then
+    end,
+  },
+  use_file = {
+    support = function(config, log_level)
+      local endpoint_config = config.endpoint.use_file
+      return endpoint_config and endpoint_config.enable and log_level >= config.levels[endpoint_config.level]
+    end,
+    handle = function(config, level_config, msg, lineinfo, info)
+      local outfile = string.format("%s/%s.log", vim.fn.stdpath("cache"), config.plugin)
       local fp = assert(io.open(outfile, "a"))
-      local str = string.format("[%-6s%s] %s: %s\n", nameupper, os.date(), lineinfo, msg)
+      local str = string.format("[%-6s%s] %s: %s\n", level_config.name:upper(), os.date(), lineinfo, msg)
       fp:write(str)
       fp:close()
-    end
-
-    -- Output to quickfix
-    if config.use_quickfix then
-      local formatted_msg = string.format("[%s] %s", nameupper, msg)
+    end,
+  },
+  use_quickfix = {
+    support = function(config, log_level)
+      local endpoint_config = config.endpoint.use_quickfix
+      return endpoint_config and endpoint_config.enable and log_level >= config.levels[endpoint_config.level]
+    end,
+    handle = function(config, level_config, msg, lineinfo, info)
+      local formatted_msg = string.format("[%s] %s", level_config.name:upper(), msg)
       local qf_entry = {
         -- remove the @ getinfo adds to the file path
         filename = info.source:sub(2),
@@ -152,18 +153,55 @@ log.new = function(config, standalone)
         text = formatted_msg,
       }
       vim.fn.setqflist({ qf_entry }, "a")
+    end,
+  }
+}
+
+
+-- ----------------------------------------------------------------------
+--    - deal log -
+-- ----------------------------------------------------------------------
+
+local log_at_level = function(config, level, level_config, message_maker, ...)
+  local available_handlers = {}
+  for k, handler in pairs(endpoint_handles) do
+    if handler.support(config, level) then
+      available_handlers[k] = handler
     end
   end
 
+  -- Return early if no available handlers
+  if vim.tbl_isempty(available_handlers) then
+    return
+  end
+
+  local msg = message_maker(config, ...)
+  local info = debug.getinfo(config.info_level or 2, "Sl")
+  local lineinfo = info.short_src .. ":" .. info.currentline
+
+  for _, handler in pairs(available_handlers) do
+    handler.handle(config, level_config, msg, lineinfo, info)
+  end
+end
+
+
+-- ----------------------------------------------------------------------
+--    - generate config level log method -
+-- ----------------------------------------------------------------------
+
+local make_log_method = function(obj)
+
+  local config = obj.config
   for i, x in ipairs(config.modes) do
+
     -- log.info("these", "are", "separated")
     obj[x.name] = function(...)
-      return log_at_level(i, x, make_string, ...)
+      return log_at_level(config, i, x, make_string, ...)
     end
 
     -- log.fmt_info("These are %s strings", "formatted")
     obj[("fmt_%s"):format(x.name)] = function(...)
-      return log_at_level(i, x, function(...)
+      return log_at_level(config, i, x, function(...)
         local passed = { ... }
         local fmt = table.remove(passed, 1)
         local inspected = {}
@@ -175,29 +213,49 @@ log.new = function(config, standalone)
     end
 
     -- log.lazy_info(expensive_to_calculate)
-    obj[("lazy_%s"):format(x.name)] = function()
-      return log_at_level(i, x, function(f)
-        return f()
-      end)
+    obj[("lazy_%s"):format(x.name)] = function(f)
+      return log_at_level(config, i, x, function(_, i_f)
+        return i_f()
+      end, f)
     end
 
     -- log.file_info("do not print")
     obj[("file_%s"):format(x.name)] = function(vals, override)
-      local original_console = config.use_console
-      config.use_console = false
-      config.info_level = override.info_level
-      log_at_level(i, x, make_string, unpack(vals))
-      config.use_console = original_console
-      config.info_level = nil
+      local merge_config = vim.tbl_deep_extend('force', config, override, {endpoint={use_console = false}})
+      log_at_level(merge_config, i, x, make_string, unpack(vals))
     end
   end
+
+end
+
+
+Log.new = function(self, config, standalone)
+
+  config = vim.tbl_deep_extend("force", default_config, config)
+
+  local levels = {}
+  for i, v in ipairs(config.modes) do
+    levels[v.name] = i
+  end
+  config.levels = levels
+
+  local obj
+  if standalone then
+    obj = Log
+  else
+    obj = {}
+  end
+  setmetatable(obj, self)
+  obj.__index = self
+  obj.config = config
+
+  make_log_method(obj)
 
   return obj
 end
 
-log.new(default_config, true)
+
+Log:new(default_config, true)
 -- }}}
 
-return log
-
-
+return Log
