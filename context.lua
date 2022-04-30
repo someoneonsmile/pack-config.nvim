@@ -1,7 +1,15 @@
 local M = {}
 
 
+-- regist context to here
 local contexts = {}
+
+
+-- ----------------------------------------------------------------------
+--    - regist the context to contexts and return the context -
+--    - can call it with context[k] = v and local v = context[k]
+--    - and also can call the method context:set(k, v, opts) and context:get(k)
+-- ----------------------------------------------------------------------
 
 function M:new(name, o)
   if contexts[name] then
@@ -20,29 +28,23 @@ local default_opts = {
 
 -- self:set
 function M:set(key, value, opts)
-
-    opts = vim.tbl_deep_extend('force', default_opts, opts or {})
-
-    if config[key] then
-        if opts.override then
-            config[key] = value
-            return true
-        else
-            return false
-        end
+  opts = vim.tbl_deep_extend('force', default_opts, opts or {})
+  if self[key] then
+    if opts.override then
+      self[key] = value
+      return true
+    else
+      return false
     end
-
-    config[key] = value
-    return true
+  end
+  self[key] = value
+  return true
 end
 
 
 -- self:get
-function M:get(key, opts)
-
-    opts = vim.tbl_deep_extend('force', default_opts, opts or {})
-
-    return self[key]
+function M:get(key)
+  return self[key]
 end
 
 
