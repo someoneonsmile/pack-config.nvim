@@ -96,12 +96,94 @@ M.curry = function(fn, ...)
   return inner
 end
 
+M.reduce = function(fn, acc, ...)
+  if select('#', ...) == 0 then
+    return acc
+  end
+  local result = acc
+  for _, v in pairs { ... } do
+    result = fn(result, v)
+  end
+  return result
+end
+
+M.pipe = function(...)
+  if select('#', ...) == 0 then
+    error('pipe requires at least one function')
+  end
+  return M.reduce(function(pre, current)
+    return function(...)
+      current(pre(...))
+    end
+  end, M.first(), select(2, ...))
+end
+
+M.compose = function(...)
+  M.pipe(M.reverse(...))
+end
+
 M.partial = function(fn, ...)
   local args = { ... }
   return function(...)
     fn(M.unpack(args), ...)
   end
 end
+
+M.filter = M.curry(function(fn, ...)
+  local result = {}
+  for _, v in pairs { ... } do
+    if fn(v) then
+      table.insert(result, v)
+    end
+  end
+  return result
+end)
+
+M.reject = M.curry(function(fn, ...)
+  local result = {}
+  for _, v in pairs { ... } do
+    if not fn(v) then
+      table.insert(result, v)
+    end
+  end
+  return result
+end)
+
+M.reverse = function(...)
+  local result = {}
+  local n = #{ ... }
+  for i, v in ipairs { ... } do
+    result[n + 1 - i] = v
+  end
+  return result
+end
+
+M.take = M.curry(function(n, ...)
+  if n < select('#', ...) then
+    return ...
+  end
+  local r = { ... }
+  r[n + 1] = nil
+  return M.unpack(r)
+end)
+
+M.drop = M.curry(select)
+
+M.take_last = M.curry(function(n, ...)
+  local len = select('#', ...)
+  if n >= len then
+    return ...
+  end
+  return M.drop(len - n, ...)
+end)
+
+M.drop_last = M.curry(function(n, ...)
+  local len = select('#', ...)
+  if n >= len then
+    return
+  end
+  return M.take(len - n, ...)
+end)
 
 -- ----------------------------------------------------------------------
 --    - return a function that map the table nil value to default_value -
