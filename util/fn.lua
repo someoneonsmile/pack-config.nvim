@@ -12,8 +12,7 @@ local function incr()
   return 'function_' .. no
 end
 
--- TODO: can move Context to global env ?
---
+-- use the context
 -- maybe can replace with context
 -- local conf = {}
 local conf = Context:new('pack-config.util.fn')
@@ -64,6 +63,10 @@ M.first = function(tbl)
   return tbl[1]
 end
 
+M.last = function(tbl)
+  return tbl[#tbl]
+end
+
 -- ----------------------------------------------------------------------
 --    - return a function that make the nil value to default_value -
 -- ----------------------------------------------------------------------
@@ -73,6 +76,30 @@ M.with_default = function(default_value)
     return M.unpack(vim.tbl_map(function(it)
       return it or default_value
     end, { ... }))
+  end
+end
+
+-- ----------------------------------------------------------------------
+--    - curry fn endwith () -
+-- ----------------------------------------------------------------------
+
+M.curry = function(fn, ...)
+  local args = { ... }
+  local function inner(...)
+    if select('#', ...) == 0 then
+      return fn(M.unpack(args))
+    else
+      vim.list_extend(args, { ... })
+      return inner
+    end
+  end
+  return inner
+end
+
+M.partial = function(fn, ...)
+  local args = { ... }
+  return function(...)
+    fn(M.unpack(args), ...)
   end
 end
 
