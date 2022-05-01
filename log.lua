@@ -224,7 +224,7 @@ local make_log_method = function(obj)
   end
 end
 
-Log.new = function(self, config, standalone)
+Log.new = function(config, standalone)
   config = vim.tbl_deep_extend('force', default_config, config)
 
   local levels = {}
@@ -239,8 +239,6 @@ Log.new = function(self, config, standalone)
   else
     obj = {}
   end
-  setmetatable(obj, self)
-  obj.__index = self
   obj.config = config
 
   make_log_method(obj)
@@ -248,7 +246,7 @@ Log.new = function(self, config, standalone)
   return obj
 end
 
-Log:new(default_config, true)
+Log.new(default_config, true)
 -- }}}
 
 return Log
