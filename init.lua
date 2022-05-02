@@ -47,7 +47,7 @@ local load = function(scan_paths)
   for _, pack_path in ipairs(pack_paths) do
     local ok, pack = pcall(require, pack_path)
     if ok and packer.is_pack(pack) then
-      valid_packs[pack.name or pack_path] = pack
+      valid_packs[pack_path] = pack
     end
   end
 
