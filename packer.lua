@@ -57,7 +57,7 @@ end
 
 -- 注册插件
 M.regist = function(packs)
-  for _, pack in pairs(packs) do
+  for path, pack in pairs(packs) do
     if M.is_pack(pack) then
       local pack_resources = pack.resources()
       util.list_extend(relys, parse_rely(pack_resources))
@@ -67,6 +67,7 @@ M.regist = function(packs)
       table.insert(setups, pack.setup)
       pack.config = fn.once(pack.config)
       table.insert(configs, pack.config)
+      util.loaded_udpate(path, pack)
     end
   end
   relys = util.list_distinct(fn.first, relys)

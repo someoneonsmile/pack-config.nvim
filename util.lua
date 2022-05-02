@@ -190,6 +190,33 @@ M.download_pack = function(pack)
   return false
 end
 
+-- ----------------------------------------------------------------------
+--    - path variant -
+-- ----------------------------------------------------------------------
+
+M.path_variant = function(path)
+  local paths = {}
+  paths[path:gsub('/', '.')] = true
+  paths[path:gsub('%.', '/')] = true
+  paths[path] = true
+  return vim.tbl_keys(paths)
+end
+
+-- ----------------------------------------------------------------------
+--    - update require load file -
+-- ----------------------------------------------------------------------
+
+M.loaded_udpate = function(pack_name, pack)
+  local luacache = (_G.__luacache or {}).cache
+  local paths = M.path_variant(pack_name)
+  for _, path in pairs(paths) do
+    package.loaded[path] = pack
+    if luacache then
+      luacache[path] = pack
+    end
+  end
+end
+
 setmetatable(M, {
   __index = function(self, k)
     local v = require('pack-config.util.' .. k)
