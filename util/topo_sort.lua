@@ -7,6 +7,40 @@ M.new = function(self, key_extractor, pre_extractor)
   return o
 end
 
+local function print_circle_graph(graph)
+  if graph == nil or #graph == 0 then
+    return
+  end
+  local paths = {}
+  local tbl_index = function(tbl, value)
+    for i, v in ipairs(tbl) do
+      if v == value then
+        return i
+      end
+    end
+  end
+  local tbl_slice = function(tbl, s, e)
+    local r = {}
+    for i = math.max(1, s), math.min(#tbl, e), 1 do
+      table.insert(r, tbl[i])
+    end
+    return r
+  end
+  local print_circle = function(name)
+    local i = tbl_index(paths, name)
+    if i then
+      log.warn('Circle detected:', table.concat(tbl_slice(paths, i, #paths), ' -> '))
+      return
+    end
+    table.insert(paths, name)
+    for _, v in ipairs(graph[name].out_link) do
+      print_circle(v)
+    end
+    table.remove(paths)
+  end
+  print_circle(next(graph))
+end
+
 -- ----------------------------------------------------------------------
 --    - generator iterator -
 -- ----------------------------------------------------------------------
@@ -38,11 +72,11 @@ M.sort_iter = function(self, tbl)
       table.insert(heads, name)
     end
   end
+  local circle_tiped = false
 
-  log.debug('sort_iter heads', heads)
   return function()
-    local head = table.remove(heads)
-    if head then
+    if #heads > 0 then
+      local head = table.remove(heads)
       for _, out_link in ipairs(graph[head].out_link) do
         graph[out_link].in_link[head] = nil
         if #graph[out_link].in_link == 0 then
@@ -52,14 +86,17 @@ M.sort_iter = function(self, tbl)
       return head, refs[head]
     end
     if #graph > 0 then
+      if not circle_tiped then
+        print_circle_graph(graph)
+      end
       local name = next(graph)
+      graph[name] = nil
       return name, refs[name]
     end
-    return nil
   end
 end
 
--- TODO: replace with sort_iter
+-- TODO: maybe can replace with sort_iter
 M.sort = function(self, tbl)
   local refs = {}
   local graph = {}
@@ -87,20 +124,19 @@ M.sort = function(self, tbl)
   local result = {}
   while next(heads) ~= nil do
     local head = table.remove(heads)
-    if head then
-      for _, out_link in ipairs(graph[head].out_link) do
-        graph[out_link].in_link[head] = nil
-        if #graph[out_link].in_link == 0 then
-          table.insert(heads, out_link)
-        end
+    for _, out_link in ipairs(graph[head].out_link) do
+      graph[out_link].in_link[head] = nil
+      if #graph[out_link].in_link == 0 then
+        table.insert(heads, out_link)
       end
-      return table.insert(result, refs[head])
     end
-    if #graph > 0 then
-      local name = next(graph)
+    table.insert(result, refs[head])
+  end
+  if #graph > 0 then
+    print_circle_graph(graph)
+    for name, _ in pairs(graph) do
       table.insert(result, refs[name])
     end
-    return nil
   end
   return result
 end
