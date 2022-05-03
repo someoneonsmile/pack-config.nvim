@@ -1,3 +1,4 @@
+local log = require('pack-config.log')
 local M = {}
 
 M.new = function(self, key_extractor, pre_extractor)
@@ -8,7 +9,7 @@ M.new = function(self, key_extractor, pre_extractor)
 end
 
 local function print_circle_graph(graph)
-  if graph == nil or #graph == 0 then
+  if next(graph) == nil then
     return
   end
   local paths = {}
@@ -26,7 +27,7 @@ local function print_circle_graph(graph)
     end
     return r
   end
-  local print_circle = function(name)
+  local function print_circle(name)
     local i = tbl_index(paths, name)
     if i then
       log.warn('Circle detected:', table.concat(tbl_slice(paths, i, #paths), ' -> '))
@@ -72,10 +73,11 @@ M.sort_iter = function(self, tbl)
       table.insert(heads, name)
     end
   end
+
   local circle_tiped = false
 
   return function()
-    if #heads > 0 then
+    if next(heads) ~= nil then
       local head = table.remove(heads)
       for _, out_link in ipairs(graph[head].out_link) do
         graph[out_link].in_link[head] = nil
@@ -83,10 +85,12 @@ M.sort_iter = function(self, tbl)
           table.insert(heads, out_link)
         end
       end
+      graph[head] = nil
       return head, refs[head]
     end
-    if #graph > 0 then
+    if next(graph) ~= nil then
       if not circle_tiped then
+        circle_tiped = true
         print_circle_graph(graph)
       end
       local name = next(graph)
