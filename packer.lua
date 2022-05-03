@@ -8,8 +8,7 @@ local M = {}
 
 local relys = {}
 local resources = {}
-local setups = {}
-local configs = {}
+local regist_packs = {}
 local deprecateds = {}
 
 -- 解析依赖
@@ -64,9 +63,8 @@ M.regist = function(packs)
       util.list_extend(resources, pack_resources)
       util.tbl_force_extend(deprecateds, util.list_to_map(pack_resources.deprecated, fn.first, fn.orign))
       pack.setup = fn.once(pack.setup)
-      table.insert(setups, pack.setup)
       pack.config = fn.once(pack.config)
-      table.insert(configs, pack.config)
+      table.insert(regist_packs, pack)
       util.loaded_udpate(path, pack)
     end
   end
@@ -99,14 +97,17 @@ M.done = function()
   deprecated_tip(all_resources)
   log.debug('pack loader will load :', vim.inspect(all_resources))
   loader.load(all_resources)
-  for _, setup in ipairs(setups) do
-    local ok, msg = pcall(setup)
+  local sorter = util.topo_sort:new(function(_, v)
+    return v.name
+  end, function(v)
+    return v.after or {}
+  end)
+  for _, pack in sorter:sort_iter(regist_packs or {}) do
+    local ok, msg = pcall(pack.setup)
     if not ok then
       vim.notify(msg, vim.log.levels.ERROR)
     end
-  end
-  for _, config in ipairs(configs) do
-    local ok, msg = pcall(config)
+    ok, msg = pcall(pack.config)
     if not ok then
       vim.notify(msg, vim.log.levels.ERROR)
     end
