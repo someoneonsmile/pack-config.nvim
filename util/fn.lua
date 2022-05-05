@@ -217,4 +217,13 @@ M.dot_chain = function(tbl, ...)
   end
 end
 
+-- ----------------------------------------------------------------------
+--    - with_env -
+-- ----------------------------------------------------------------------
+
+M.with_env = function (fn, env)
+  env._G = _G
+  return setfenv(fn, setmetatable(env, {__index = _G}))
+end
+
 return M
