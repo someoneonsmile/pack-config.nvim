@@ -251,6 +251,9 @@ local make_log_method = function(obj)
       log_at_level(merge_config, i, x, make_string, unpack(vals))
     end
   end
+  obj.log = function (log_level, ...)
+      return log_at_level(config, config.levels[log_level], config.modes[config.levels[log_level]], make_string, ...)
+  end
 end
 
 Log.new = function(config, standalone)
@@ -259,6 +262,7 @@ Log.new = function(config, standalone)
   local levels = {}
   for i, v in ipairs(config.modes) do
     levels[v.name] = i
+    levels[v.log_level] = i
   end
   config.levels = levels
 
