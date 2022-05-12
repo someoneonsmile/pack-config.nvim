@@ -12,6 +12,7 @@ local function print_circle_graph(graph)
   if next(graph) == nil then
     return
   end
+  log.warn('Circle detected, graph:', graph)
   local paths = {}
   local tbl_index = function(tbl, value)
     for i, v in ipairs(tbl) do
@@ -30,7 +31,7 @@ local function print_circle_graph(graph)
   local function print_circle(name)
     local i = tbl_index(paths, name)
     if i then
-      log.warn('Circle detected:', table.concat(tbl_slice(paths, i, #paths), ' -> '))
+      log.warn('Circle detected, path:', table.concat(tbl_slice(paths, i, #paths), ' -> '))
       return
     end
     table.insert(paths, name)
@@ -81,7 +82,7 @@ M.sort_iter = function(self, tbl)
       local head = table.remove(heads)
       for _, out_link in ipairs(graph[head].out_link) do
         graph[out_link].in_link[head] = nil
-        if #graph[out_link].in_link == 0 then
+        if next(graph[out_link].in_link) == nil then
           table.insert(heads, out_link)
         end
       end
@@ -119,7 +120,7 @@ M.sort = function(self, tbl)
     end
   end
 
-  for name, links in ipairs(graph) do
+  for name, links in pairs(graph) do
     if next(links.in_link) == nil then
       table.insert(heads, name)
     end
@@ -130,13 +131,14 @@ M.sort = function(self, tbl)
     local head = table.remove(heads)
     for _, out_link in ipairs(graph[head].out_link) do
       graph[out_link].in_link[head] = nil
-      if #graph[out_link].in_link == 0 then
+      if next(graph[out_link].in_link) == nil then
         table.insert(heads, out_link)
       end
     end
+    graph[head] = nil
     table.insert(result, refs[head])
   end
-  if #graph > 0 then
+  if next(graph) ~= nil then
     print_circle_graph(graph)
     for name, _ in pairs(graph) do
       table.insert(result, refs[name])
