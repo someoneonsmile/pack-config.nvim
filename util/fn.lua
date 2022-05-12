@@ -1,4 +1,5 @@
 local Context = require('pack-config.context')
+
 local M = {}
 
 -- ----------------------------------------------------------------------
@@ -23,8 +24,8 @@ M.once = function(f, opts)
 
   return function(...)
     if conf[key] then
-      if opts.notify then
-        vim.notify('once function call again. function key: ' .. key, opts.notify)
+      if opts.notify_fn then
+        opts.notify_fn()
       end
       return false
     end

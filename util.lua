@@ -1,3 +1,5 @@
+local log = require('pack-config.log')
+
 local M = {}
 
 -- ----------------------------------------------------------------------
@@ -180,11 +182,11 @@ M.download_pack = function(pack)
     pack.dist_dir = pack.dist_dir .. '/'
   end
   if pack.prompt and M.answer(pack.prompt) then
-    vim.notify(string.format('git clone https://github.com/%s.git %s', pack.path, pack.dist_dir .. pack.name))
+    log.info(string.format('git clone https://github.com/%s.git %s', pack.path, pack.dist_dir .. pack.name))
     local out = vim.fn.system(
       string.format('git clone https://github.com/%s.git %s', pack.path, pack.dist_dir .. pack.name)
     )
-    vim.notify(out)
+    log.info(out)
     return vim.v.shell_error == 0
   end
   return false

@@ -109,13 +109,13 @@ M.done = function()
   for _, pack in ipairs(regist_packs_sorted) do
     local ok, msg = pcall(pack.setup)
     if not ok then
-      vim.notify(msg, vim.log.levels.ERROR)
+      log.error(msg)
     end
   end
   for _, pack in ipairs(regist_packs_sorted) do
     local ok, msg = pcall(pack.config)
     if not ok then
-      vim.notify(msg, vim.log.levels.ERROR)
+      log.error(msg)
     end
   end
 end
