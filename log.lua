@@ -23,6 +23,11 @@ local default_config = {
 
   endpoint = {
     use_console = {
+      enable = false,
+      level = 'info',
+      async = true,
+    },
+    use_notify = {
       enable = true,
       level = 'info',
       async = true,
@@ -36,12 +41,12 @@ local default_config = {
 
   -- Level configuration
   modes = {
-    { name = 'trace', hl = 'Comment' },
-    { name = 'debug', hl = 'Comment' },
-    { name = 'info', hl = 'None' },
-    { name = 'warn', hl = 'WarningMsg' },
-    { name = 'error', hl = 'ErrorMsg' },
-    { name = 'fatal', hl = 'ErrorMsg' },
+    { name = 'trace', hl = 'Comment', log_level = vim.log.levels.TRACE},
+    { name = 'debug', hl = 'Comment', log_level = vim.log.levels.DEBUG},
+    { name = 'info', hl = 'None', log_level = vim.log.levels.INFO },
+    { name = 'warn', hl = 'WarningMsg', log_level = vim.log.levels.WARN },
+    { name = 'error', hl = 'ErrorMsg', log_level = vim.log.levels.ERROR },
+    { name = 'fatal', hl = 'ErrorMsg', log_level = vim.log.levels.ERROR },
   },
 
   -- Can limit the number of decimals displayed for floats
@@ -123,6 +128,30 @@ local endpoint_handles = {
         log_to_console()
       else
         vim.schedule(log_to_console)
+      end
+    end,
+  },
+  use_notify = {
+    support = function(config, log_level)
+      local endpoint_config = config.endpoint.use_notify
+      return endpoint_config and endpoint_config.enable and log_level >= config.levels[endpoint_config.level]
+    end,
+    handle = function(config, level_config, msg, lineinfo, info)
+      local notify = function()
+        local formatted_msg = string.format(
+          '[%s] %s: %s',
+          config.plugin,
+          lineinfo,
+          msg
+        )
+        vim.notify(formatted_msg, level_config.log_level)
+      end
+
+      -- deal for async flag
+      if not config.endpoint.use_notify.async and not vim.in_fast_event() then
+        notify()
+      else
+        vim.schedule(notify)
       end
     end,
   },
