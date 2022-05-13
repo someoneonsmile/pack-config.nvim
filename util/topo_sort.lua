@@ -66,11 +66,7 @@ M.sort_iter = function(self, tbl)
         graph[name].in_link[pre] = true
         table.insert(graph[pre].out_link, name)
       end
-    end
-  end
-
-  for name, links in pairs(graph) do
-    if next(links.in_link) == nil then
+    else
       table.insert(heads, name)
     end
   end
@@ -117,11 +113,7 @@ M.sort = function(self, tbl)
         graph[name].in_link[pre] = true
         table.insert(graph[pre].out_link, name)
       end
-    end
-  end
-
-  for name, links in pairs(graph) do
-    if next(links.in_link) == nil then
+    else
       table.insert(heads, name)
     end
   end

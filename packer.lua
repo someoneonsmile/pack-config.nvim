@@ -43,6 +43,7 @@ end
 
 M.is_pack = function(pack)
   return pack['is_pack']
+    and type(pack['name']) == 'string'
     and type(pack['resources']) == 'function'
     and type(pack['setup']) == 'function'
     and type(pack['config']) == 'function'
