@@ -40,10 +40,9 @@ M.scan = function(scan_paths, opts)
     rv = vim.fn.system('fd ' .. table.concat(fd_opts, ' '))
     if vim.v.shell_error == 0 then
       local result_paths = vim.split(rv, '\n', { plain = true, trimempty = true })
-      all_result_paths = vim.tbl_extend('force', all_result_paths, result_paths)
+      all_result_paths = vim.list_extend(all_result_paths, result_paths)
     end
   end
-
   return all_result_paths
 end
 
