@@ -3,6 +3,7 @@ local util = require('pack-config.util')
 
 local scanner
 local loader
+local env
 
 local M = {}
 
@@ -54,6 +55,7 @@ local load = function(scan_paths)
   -- pack istall and config
   packer.setup {
     loader = loader,
+    env = env,
   }
   packer.regist(valid_packs)
   packer.done()
@@ -64,6 +66,7 @@ end
 --  opts.scanner_opts: control the scanner init action
 --  opts.loader: loader builtin or custom
 --  opts.loader_opts: control the loader init action
+--  opts.env: env to pack setup/config
 M.setup = util.fn.once(function(opts)
   opts = util.deep_merge_opts({
     loader_opts = {
@@ -71,11 +74,11 @@ M.setup = util.fn.once(function(opts)
       package = nil,
     },
   }, opts)
-  scanner = require('pack-config.scanner').with_default(opts and opts.scanner, false)
-  loader = require('pack-config.loader').with_default(opts and opts.loader, false)
+  scanner = require('pack-config.scanner').with_default(opts.scanner, false)
+  loader = require('pack-config.loader').with_default(opts.loader, false)
   scanner.init(opts.scanner_opts)
   loader.init(opts.loader_opts)
-
+  env = opts.env
   load(opts.scan_paths)
 end)
 
