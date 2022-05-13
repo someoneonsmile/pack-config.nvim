@@ -4,6 +4,8 @@ local log = require('pack-config.log')
 
 local loader
 
+local env
+
 local M = {}
 
 local relys = {}
@@ -53,6 +55,7 @@ end
 M.setup = function(opts)
   loader = opts.loader
   assert(loader ~= nil, 'please config the loader')
+  env = opts.env or {}
 end
 
 -- 注册插件
@@ -63,8 +66,8 @@ M.regist = function(packs)
       util.list_extend(relys, parse_rely(pack_resources))
       util.list_extend(resources, pack_resources)
       util.tbl_force_extend(deprecateds, util.list_to_map(pack_resources.deprecated, fn.first, fn.orign))
-      pack.setup = fn.once(pack.setup)
-      pack.config = fn.once(pack.config)
+      pack.setup = fn.once(fn.with_env(env)(pack.setup))
+      pack.config = fn.once(fn.with_env(env)(pack.config))
       table.insert(regist_packs, pack)
       util.loaded_udpate(path, pack)
     end
