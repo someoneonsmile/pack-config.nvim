@@ -1,11 +1,18 @@
 local util = require('pack-config.util')
 
-local M = {}
-
-local default_opts = {
-  extension = nil,
+local default_cfg = {
+  extension = 'lua',
   pattern = '.',
 }
+
+local cfg = default_cfg;
+
+
+-- ----------------------------------------------------------------------
+--    - M -
+-- ----------------------------------------------------------------------
+
+local M = {}
 
 M.name = 'fd'
 
@@ -14,6 +21,7 @@ M.exist = function()
 end
 
 M.init = function(opts)
+  cfg = util.deep_merge_opts(default_cfg, opts)
   if not M.exist() then
     error('not find fd command', vim.log.levels.ERROR)
   end
@@ -23,14 +31,12 @@ end
 -- @param opts {}
 --  opts.extension
 --  opts.pattern
-M.scan = function(scan_paths, opts)
-  opts = util.deep_merge_opts(default_opts, opts)
-
+M.scan = function(scan_paths)
   local fd_opts = {}
-  if opts.extension then
-    table.insert(fd_opts, '--extension ' .. opts.extension)
+  if cfg.extension then
+    table.insert(fd_opts, '--extension ' .. cfg.extension)
   end
-  table.insert(fd_opts, opts.pattern)
+  table.insert(fd_opts, cfg.pattern)
 
   local all_result_paths = {}
   local rv
