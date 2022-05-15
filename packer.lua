@@ -107,7 +107,7 @@ M.done = function()
   local sorter = util.topo_sort:new(function(_, v)
     return v.name
   end, function(v)
-    return util.fn.with_default({})(util.string_or_table(v.after))
+    return util.fn.with_default {}(util.string_or_table(v.after))
   end)
   local regist_packs_sorted = sorter:sort(regist_packs)
   for _, pack in ipairs(regist_packs_sorted) do

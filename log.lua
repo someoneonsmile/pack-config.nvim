@@ -41,8 +41,8 @@ local default_config = {
 
   -- Level configuration
   modes = {
-    { name = 'trace', hl = 'Comment', log_level = vim.log.levels.TRACE},
-    { name = 'debug', hl = 'Comment', log_level = vim.log.levels.DEBUG},
+    { name = 'trace', hl = 'Comment', log_level = vim.log.levels.TRACE },
+    { name = 'debug', hl = 'Comment', log_level = vim.log.levels.DEBUG },
     { name = 'info', hl = 'None', log_level = vim.log.levels.INFO },
     { name = 'warn', hl = 'WarningMsg', log_level = vim.log.levels.WARN },
     { name = 'error', hl = 'ErrorMsg', log_level = vim.log.levels.ERROR },
@@ -138,12 +138,7 @@ local endpoint_handles = {
     end,
     handle = function(config, level_config, msg, lineinfo, info)
       local notify = function()
-        local formatted_msg = string.format(
-          '[%s] %s: %s',
-          config.plugin,
-          lineinfo,
-          msg
-        )
+        local formatted_msg = string.format('[%s] %s: %s', config.plugin, lineinfo, msg)
         vim.notify(formatted_msg, level_config.log_level)
       end
 
@@ -251,8 +246,8 @@ local make_log_method = function(obj)
       log_at_level(merge_config, i, x, make_string, unpack(vals))
     end
   end
-  obj.log = function (log_level, ...)
-      return log_at_level(config, config.levels[log_level], config.modes[config.levels[log_level]], make_string, ...)
+  obj.log = function(log_level, ...)
+    return log_at_level(config, config.levels[log_level], config.modes[config.levels[log_level]], make_string, ...)
   end
 end
 

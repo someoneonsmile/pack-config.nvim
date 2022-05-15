@@ -222,10 +222,10 @@ end
 --    - with_env -
 -- ----------------------------------------------------------------------
 
-M.with_env = function (env)
+M.with_env = function(env)
   env._G = _G
-  env = setmetatable(env, {__index = _G})
-  return function (fn)
+  env = setmetatable(env, { __index = _G })
+  return function(fn)
     return setfenv(fn, env)
   end
 end
