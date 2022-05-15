@@ -1,9 +1,20 @@
 local packer = require('pack-config.packer')
 local util = require('pack-config.util')
 
-local scanner
-local loader
-local env
+local default_cfg = {
+  loader = nil,
+  loader_opts = { },
+  scanner = nil,
+  scanner_opts = { },
+  env = {}
+}
+
+local cfg = default_cfg
+
+
+-- ----------------------------------------------------------------------
+--    - M -
+-- ----------------------------------------------------------------------
 
 local M = {}
 
@@ -33,14 +44,9 @@ local load = function(scan_paths)
   -- TODO:  use plenary.path refact the code
   local root_path = vim.fn.stdpath('config') .. '/'
 
-  local opts = {
-    pattern = '.lua',
-    extension = 'lua',
-  }
-
   -- scan lua file
   scan_paths = to_absolute_path(root_path, scan_paths)
-  local pack_paths = scanner.scan(scan_paths, opts)
+  local pack_paths = cfg.scanner.scan(scan_paths)
   pack_paths = to_lua_path(root_path .. 'lua/', pack_paths)
 
   -- filter valid pack
@@ -53,10 +59,6 @@ local load = function(scan_paths)
   end
 
   -- pack istall and config
-  packer.setup {
-    loader = loader,
-    env = env,
-  }
   packer.regist(valid_packs)
   packer.done()
 end
@@ -68,18 +70,16 @@ end
 --  opts.loader_opts: control the loader init action
 --  opts.env: env to pack setup/config
 M.setup = util.fn.once(function(opts)
-  opts = util.deep_merge_opts({
-    loader_opts = {
-      auto_download = true,
-      package = nil,
-    },
-  }, opts)
-  scanner = require('pack-config.scanner').with_default(opts.scanner, false)
-  loader = require('pack-config.loader').with_default(opts.loader, false)
-  scanner.init(opts.scanner_opts)
-  loader.init(opts.loader_opts)
-  env = opts.env
-  load(opts.scan_paths)
+  cfg = util.deep_merge_opts(default_cfg, opts)
+  cfg.scanner = require('pack-config.scanner').with_default(cfg.scanner, false)
+  cfg.loader = require('pack-config.loader').with_default(cfg.loader, false)
+  cfg.scanner.init(cfg.scanner_opts)
+  cfg.loader.init(cfg.loader_opts)
+  packer.setup {
+    loader = cfg.loader,
+    env = cfg.env,
+  }
+  load(cfg.scan_paths)
 end)
 
 return M

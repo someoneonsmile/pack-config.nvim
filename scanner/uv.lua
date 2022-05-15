@@ -1,6 +1,18 @@
 local util = require('pack-config.util')
 -- local scan = require('plenary.scandir')
 
+local default_cfg = {
+  extension = nil,
+  pattern = '.',
+}
+
+local cfg = default_cfg
+
+
+-- ----------------------------------------------------------------------
+--    - M -
+-- ----------------------------------------------------------------------
+
 local M = {}
 
 M.name = 'uv'
@@ -18,26 +30,20 @@ M.init = function(opts)
       prompt = 'Download plenary.nvim ? (y for yes)',
     }
   end
+  cfg = vim.tbl_deep_extend('force', default_cfg, opts)
 end
 
-local default_opts = {
-  extension = nil,
-  pattern = '.',
-}
-
-M.scan = function(paths, opts)
-  opts = vim.tbl_deep_extend('force', default_opts, opts)
-
+M.scan = function(paths)
   local walk_opts = {}
-  if opts.extension then
-    walk_opts.search_pattern = '.' .. opts.extension
+  if cfg.extension then
+    walk_opts.search_pattern = '.' .. cfg.extension
   end
-  if opts.pattern then
-    walk_opts.search_pattern = opts.pattern
+  if cfg.pattern then
+    walk_opts.search_pattern = cfg.pattern
   end
 
   local rusult_paths = {}
-  opts.on_insert = function(entry, _)
+  cfg.on_insert = function(entry, _)
     table.insert(rusult_paths, entry)
     return true
   end
@@ -48,7 +54,7 @@ M.scan = function(paths, opts)
 end
 
 M.scan_async = function(paths, opts)
-  opts = vim.tbl_deep_extend('force', default_opts, opts)
+  opts = vim.tbl_deep_extend('force', default_cfg, opts)
 
   local walk_opts = {}
   if opts.extension then

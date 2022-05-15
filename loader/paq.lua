@@ -1,6 +1,19 @@
 local util = require('pack-config.util')
 local fn = require('pack-config.util.fn')
 
+local default_cfg = {
+  auto_download = true,
+  pack_self = true,
+  package = 'paqs',
+}
+
+local cfg = default_cfg
+
+
+-- ----------------------------------------------------------------------
+--    - M -
+-- ----------------------------------------------------------------------
+
 local M = {}
 
 M.name = 'paq'
@@ -9,14 +22,8 @@ M.exist = function()
   return pcall(require, 'paq')
 end
 
-local cfg = {
-  auto_download = true,
-  pack_self = true,
-  package = nil,
-}
-
 M.init = fn.once(function(opts)
-  cfg = util.deep_merge_opts(cfg, opts)
+  cfg = util.deep_merge_opts(default_cfg, opts)
 
   if not M.exist() then
     if cfg.auto_download then
@@ -35,10 +42,10 @@ M.init = fn.once(function(opts)
   -- some setup code
   local ok, paq = pcall(require, 'paq')
   if not ok then
-    error('not find paq-nvim')
+    error('not find savq/paq-nvim')
   end
   paq:setup {
-    path = vim.fn.stdpath('data') .. '/site/pack/' .. (cfg.package or 'paqs') .. '/',
+    path = vim.fn.stdpath('data') .. '/site/pack/' .. cfg.package .. '/',
   }
 end)
 

@@ -1,6 +1,18 @@
 local util = require('pack-config.util')
 local fn = require('pack-config.util.fn')
 
+local default_cfg = {
+  auto_download = true,
+  pack_self = true,
+  package = 'packer',
+}
+
+local cfg = default_cfg
+
+-- ----------------------------------------------------------------------
+--    - M -
+-- ----------------------------------------------------------------------
+
 local M = {}
 
 M.name = 'packer'
@@ -9,14 +21,8 @@ M.exist = function()
   return pcall(require, 'packer')
 end
 
-local cfg = {
-  auto_download = true,
-  pack_self = true,
-  package = nil,
-}
-
 M.init = fn.once(function(opts)
-  cfg = util.deep_merge_opts(cfg, opts)
+  cfg = util.deep_merge_opts(default_cfg, opts)
 
   if not M.exist() then
     if cfg.auto_download then
