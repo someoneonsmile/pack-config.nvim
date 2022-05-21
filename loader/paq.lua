@@ -1,3 +1,4 @@
+local log = require('pack-config.log')
 local util = require('pack-config.util')
 local fn = require('pack-config.util.fn')
 
@@ -58,6 +59,7 @@ end)
 --     pin = '',
 --     ft = {},
 --     opt = true,
+--     rtp = '',
 --     run = function() end,
 --   },
 local transform = function(pack)
@@ -69,6 +71,23 @@ local transform = function(pack)
     pin = pack.pin,
     run = pack.run,
   }
+end
+
+-- 不支持的 opts 提示
+local not_support_opts_tip = function(packs)
+  local not_support_opts = {
+    ft = true,
+    rtp = true,
+  }
+  local tips = { }
+  for k in pairs(packs) do
+    if not_support_opts[k] ~= nil then
+      tips[k] = true
+    end
+  end
+  if not vim.tbl_isempty(tips) then
+    log.warn('paq not support opts', tips)
+  end
 end
 
 -- @param packs table
@@ -84,7 +103,7 @@ M.load = function(packs)
   if cfg.pack_self then
     table.insert(packs, { 'savq/paq-nvim' })
   end
-
+  not_support_opts_tip(packs)
   paq(vim.tbl_map(transform, packs))
 end
 
