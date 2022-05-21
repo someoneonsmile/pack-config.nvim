@@ -1,9 +1,12 @@
 local M = {}
 
+M.__index = M
+
 M.is_set = function(self)
   return getmetatable(self) == M
 end
 
+-- 交集
 M.intersection = function(a, b)
   local result = M:new()
   for key in pairs(a) do
@@ -14,6 +17,7 @@ M.intersection = function(a, b)
   return result
 end
 
+-- 并集
 M.union = function(a, b)
   local result = M:new()
   for key in pairs(a) do
@@ -25,6 +29,7 @@ M.union = function(a, b)
   return result
 end
 
+-- 补集
 M.complement = function(a, b)
   local result = M:new()
   for key in pairs(a) do
@@ -33,7 +38,20 @@ M.complement = function(a, b)
     end
   end
   for key in pairs(b) do
-    result[key] = true
+    if a[key] == nil then
+      result[key] = true
+    end
+  end
+  return result
+end
+
+-- 差集
+M.different = function(a, b)
+  local result = M:new()
+  for key in pairs(a) do
+    if b[key] == nil then
+      result[key] = true
+    end
   end
   return result
 end
@@ -48,13 +66,23 @@ M.__sub = function(self, item)
   return self
 end
 
+-- 交
 M.__band = M.intersection
 
+-- 并
 M.__bor = M.union
 
+-- 补
 M.__bxor = M.complement
 
+-- 并
 M.__concat = M.union
+
+-- 右差
+M.__shr = M.different
+
+-- 左差
+M.__shl = function(a, b) M.different(b, a) end
 
 M.new = function(self)
   return setmetatable({}, self)
@@ -78,6 +106,14 @@ end
 
 M.contains = function(self, item)
   return self[item] ~= nil
+end
+
+M.is_empty = function(self)
+  return next(self) == nil
+end
+
+M.is_notempty = function(self)
+  return next(self) ~= nil
 end
 
 return M
