@@ -1,3 +1,4 @@
+local log = require('pack-config.log')
 local util = require('pack-config.util')
 local fn = require('pack-config.util.fn')
 
@@ -59,6 +60,7 @@ end, { notify = vim.log.levels.INFO })
 --     '',
 --     as = '',
 --     branch = '',
+--     rtp = '',
 --     tag = '',
 --     pin = '',
 --     ft = {},
@@ -75,7 +77,22 @@ local transform = function(pack)
     ft = pack.ft,
     opt = pack.opt,
     run = pack.run,
+    rtp = pack.rtp,
   }
+end
+
+-- 不支持的 opts 提示
+local not_support_opts_tip = function(packs)
+  local not_support_opts = { }
+  local tips = { }
+  for k in pairs(packs) do
+    if not_support_opts[k] ~= nil then
+      tips[k] = true
+    end
+  end
+  if not vim.tbl_isempty(tips) then
+    log.warn('packer not support opts', tips)
+  end
 end
 
 -- @param packs table
@@ -91,6 +108,8 @@ M.load = function(packs)
   if cfg.pack_self then
     table.insert(packs, { 'wbthomason/packer.nvim' })
   end
+
+  not_support_opts_tip(packs)
 
   packer.startup(function(use)
     for _, pack in ipairs(packs) do
