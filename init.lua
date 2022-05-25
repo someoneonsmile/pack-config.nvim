@@ -3,14 +3,13 @@ local util = require('pack-config.util')
 
 local default_cfg = {
   loader = nil,
-  loader_opts = { },
+  loader_opts = {},
   scanner = nil,
-  scanner_opts = { },
-  env = {}
+  scanner_opts = {},
+  env = {},
 }
 
 local cfg = default_cfg
-
 
 -- ----------------------------------------------------------------------
 --    - M -

@@ -82,7 +82,9 @@ M.__concat = M.union
 M.__shr = M.different
 
 -- 左差
-M.__shl = function(a, b) M.different(b, a) end
+M.__shl = function(a, b)
+  M.different(b, a)
+end
 
 M.new = function(self)
   return setmetatable({}, self)
