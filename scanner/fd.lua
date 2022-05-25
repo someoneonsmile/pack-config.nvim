@@ -5,8 +5,7 @@ local default_cfg = {
   pattern = '.',
 }
 
-local cfg = default_cfg;
-
+local cfg = default_cfg
 
 -- ----------------------------------------------------------------------
 --    - M -

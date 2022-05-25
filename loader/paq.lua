@@ -10,7 +10,6 @@ local default_cfg = {
 
 local cfg = default_cfg
 
-
 -- ----------------------------------------------------------------------
 --    - M -
 -- ----------------------------------------------------------------------
@@ -79,7 +78,7 @@ local not_support_opts_tip = function(packs)
     ft = true,
     rtp = true,
   }
-  local tips = { }
+  local tips = {}
   for k in pairs(packs) do
     if not_support_opts[k] ~= nil then
       tips[k] = true

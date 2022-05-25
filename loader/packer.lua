@@ -83,8 +83,8 @@ end
 
 -- 不支持的 opts 提示
 local not_support_opts_tip = function(packs)
-  local not_support_opts = { }
-  local tips = { }
+  local not_support_opts = {}
+  local tips = {}
   for k in pairs(packs) do
     if not_support_opts[k] ~= nil then
       tips[k] = true
