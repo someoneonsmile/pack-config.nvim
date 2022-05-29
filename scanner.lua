@@ -1,6 +1,5 @@
 local builtin_scanners = function()
   return {
-    -- TODO:  adjust the order
     require('pack-config.scanner.fd'),
     require('pack-config.scanner.uv'),
   }
@@ -13,7 +12,10 @@ local available_builtin_scanners = function()
 end
 
 local with_default = function(scanner, report_error)
-  if scanner ~= nil and scanner.exist() then
+  if scanner ~= nil then
+    if not scanner.exist() and report_error then
+      error(string.format('the scanner not exist, %s', scanner.name))
+    end
     return scanner
   end
   local scanners = builtin_scanners()
@@ -31,11 +33,8 @@ local with_default = function(scanner, report_error)
         builtin_scanners: %s]],
         table.concat(scanner_names, ', ')
       ))
-    elseif scanner ~= nil then
-      return scanner
-    else
-      return scanners[1]
     end
+    return scanners[1]
   else
     return available_scanners[1]
   end

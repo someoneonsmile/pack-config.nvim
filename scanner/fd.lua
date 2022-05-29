@@ -16,7 +16,7 @@ local M = {}
 M.name = 'fd'
 
 M.exist = function()
-  return vim.fn.executable('fd')
+  return vim.fn.executable('fd') == 1
 end
 
 M.init = function(opts)

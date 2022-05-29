@@ -12,7 +12,10 @@ local available_builtin_loaders = function()
 end
 
 local with_default = function(loader, report_error)
-  if loader ~= nil and loader.exist() then
+  if loader ~= nil then
+    if not loader.exist() and report_error then
+      error(string.format('the loader not exist, %s', loader.name))
+    end
     return loader
   end
   local loaders = builtin_loaders()
@@ -30,11 +33,8 @@ local with_default = function(loader, report_error)
         builtin_loaders: %s]],
         table.concat(loader_names, ', ')
       ))
-    elseif loader ~= nil then
-      return loader
-    else
-      return loaders[1]
     end
+    return loaders[1]
   else
     return available_loaders[1]
   end
