@@ -94,6 +94,7 @@ M.curry = function(fn, ...)
       return inner
     end
   end
+
   return inner
 end
 
