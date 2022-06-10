@@ -65,26 +65,20 @@ return M
 
 ## Download Package Location
 
-`vim.fn.stdpath('data') .. '/site/pack/init/start'`: 预下载包路径，包括包管理器，启动依赖等
+`vim.fn.stdpath('data') .. '/site/pack/init/start'`: predownload pack loader location
 
-`vim.fn.stdpath('data') .. '/site/pack/packer/start'`: 特定包管理器路径
+`vim.fn.stdpath('data') .. '/site/pack/packer/start'`: pack loader download location
 
 ## TODO
 
-- [x] 选择包管理器
-- [ ] 文档补充文件结构及约定部分
 - [ ] lua check and style
-- [x] pack loader 添加 init 方法
-- [x] 更改 lua 模块结构 去 init.lua builtin
+- [x] pack loader add init function
 - [x] deprecate tip
-- [x] after 拓扑 sort
-- [x] context 多实例
-- [ ] 外部 lua file support
-- [x] topologic sort 拓扑排序
-  - [x] 拓扑排序 circle check
-  - [ ] 拓扑排序 name 缺失时 自动生成序号
-  - [ ] name 重复 error
-- [ ] ID 生成器
+- [x] context muti instance
+- [ ] external lua file support
+- [x] topologic sort
+  - [x] circle check
+- [ ] pack_name repeat error
 - [x] refact log file (level with endpoin)
 - [x] log use vim.notify
 - [x] setfenv with setup and config
