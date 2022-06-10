@@ -1,3 +1,3 @@
 # pack-config.nvim
 
-Unified package installation and configuration, decoupling package manager
+Mod the package, Unified package installation and configuration in one file, decoupling package manager
