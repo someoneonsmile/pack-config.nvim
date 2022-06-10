@@ -28,7 +28,7 @@ M.is_pack = true
 M.resources = function()
   return {
     {
-      '[pack_item_url]',
+      '[resource_url]',
       as = '',
       branch = '',
       tag = '',
@@ -38,7 +38,7 @@ M.resources = function()
       opt = true,
       run = function() end,
       rely = {
-        '[other_pack_item_url]'
+        '[other_resource_url]'
       },
     },
   }
@@ -53,10 +53,14 @@ end
 -- pack setup config
 M.setup = function()
 
+  local other_pack = pack('other_pack_name')
+
 end
 
 -- pack config after all pack setup
 M.config = function()
+
+  local other_pack = pack('other_pack_name')
 
 end
 
