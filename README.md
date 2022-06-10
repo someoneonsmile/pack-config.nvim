@@ -75,10 +75,10 @@ return M
 - [x] pack loader add init function
 - [x] deprecate tip
 - [x] context muti instance
-- [ ] external lua file support
+- [x] external lua file support
 - [x] topologic sort
   - [x] circle check
-- [ ] pack_name repeat error
+- [x] pack_name repeat error
 - [x] refact log file (level with endpoin)
 - [x] log use vim.notify
 - [x] setfenv with setup and config
