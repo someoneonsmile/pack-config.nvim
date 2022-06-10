@@ -9,7 +9,7 @@ Mod the package, Unified package installation and configuration in one file, dec
 require('pack-config').setup {
   loader = require('pack-config.loader.packer'),
   loader_opts = {},
-  scanner = require('pack-config'.scanner.fd'),
+  scanner = require('pack-config.scanner.fd'),
   scanner_opts = {},
   scan_paths = { 'lua/somepath/pre', 'lua/somepath' },
 }
@@ -18,16 +18,17 @@ require('pack-config').setup {
 ## Pack File Format
 
 ```lua
+-- pack config
 local M = {}
 
-M.name = 'name'
+M.name = '[pack_name]'
 
 M.is_pack = true
 
 M.resources = function()
   return {
     {
-      '[pack url]',
+      '[pack_item_url]',
       as = '',
       branch = '',
       tag = '',
@@ -36,26 +37,25 @@ M.resources = function()
       ft = {},
       opt = true,
       run = function() end,
-      rely = {},
+      rely = {
+        '[other_pack_item_url]'
+      },
     },
   }
 end
 
-
 M.after = function()
   return {
-    '[other config pack]'
+    '[other_pack_name]'
   }
 end
 
-
-# pack setup config
+-- pack setup config
 M.setup = function()
 
 end
 
-
-# pack config after all pack setup
+-- pack config after all pack setup
 M.config = function()
 
 end
