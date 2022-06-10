@@ -44,6 +44,11 @@ function M:get(key)
   return self[key]
 end
 
+-- self:is_empty
+function M:is_empty()
+  return vim.tbl_isempty(self)
+end
+
 -- global context
 M.g = M:new {}
 

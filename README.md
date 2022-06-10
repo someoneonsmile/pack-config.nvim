@@ -11,7 +11,7 @@ require('pack-config').setup {
   loader_opts = {},
   scanner = require('pack-config.scanner.fd'),
   scanner_opts = {},
-  scan_paths = { 'lua/somepath/pre', 'lua/somepath' },
+  scan_paths = { '/path/subpath/pre', '/path/subpath' },
 }
 ```
 

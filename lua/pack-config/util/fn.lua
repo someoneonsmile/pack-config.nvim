@@ -1,4 +1,5 @@
 local Context = require('pack-config.context')
+local Const = require('pack-config.const')
 
 local M = {}
 
@@ -16,7 +17,7 @@ end
 -- use the context
 -- maybe can replace with context
 -- local conf = {}
-local conf = Context:new('pack-config.util.fn')
+local conf = Context:new(Const.util_fn_once_key)
 
 M.once = function(f, opts)
   opts = opts or {}

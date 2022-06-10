@@ -1,12 +1,18 @@
 local packer = require('pack-config.packer')
 local util = require('pack-config.util')
+local log = require('pack-config.log')
 
 local default_cfg = {
   loader = nil,
   loader_opts = {},
   scanner = nil,
   scanner_opts = {},
-  env = {},
+  env = {
+    -- pack_getter
+    pack = function(pack_name)
+      return packer.get_pack(pack_name)
+    end,
+  },
 }
 
 local cfg = default_cfg
@@ -17,43 +23,25 @@ local cfg = default_cfg
 
 local M = {}
 
-local to_absolute_path = function(root_path, relative_paths)
-  if not vim.endswith(root_path, '/') then
-    root_path = root_path .. '/'
-  end
-  return vim.tbl_map(function(path)
-    return root_path .. path
-  end, relative_paths)
-end
-
-local to_lua_path = function(root_path, absolute_paths)
-  if not vim.endswith(root_path, '/') then
-    root_path = root_path .. '/'
-  end
-  return vim.tbl_map(function(path)
-    if path:sub(1, #root_path) == root_path then
-      path = path:sub(#root_path + 1, -1)
-    end
-    return path:gsub('%.[^.]*$', '')
-  end, absolute_paths)
-end
-
--- TODO: 支持完整路径
 local load = function(scan_paths)
-  -- TODO:  use plenary.path refact the code
-  local root_path = vim.fn.stdpath('config') .. '/'
+  if util.tbl_isempty(scan_paths) then
+    log.warn('scan_paths is empty')
+    return
+  end
 
   -- scan lua file
-  scan_paths = to_absolute_path(root_path, scan_paths)
   local pack_paths = cfg.scanner.scan(scan_paths)
-  pack_paths = to_lua_path(root_path .. 'lua/', pack_paths)
 
   -- filter valid pack
   local valid_packs = {}
   for _, pack_path in ipairs(pack_paths) do
-    local ok, pack = pcall(require, pack_path)
-    if ok and packer.is_pack(pack) then
-      valid_packs[pack_path] = pack
+    local ok, pack = pcall(dofile, pack_path, 'bt')
+    if not ok then
+      log.error('load lua file failed, path = ' .. pack_path, pack)
+    elseif not packer.is_pack(pack) then
+      log.error('not a pack. path =', pack_path)
+    else
+      valid_packs[pack.name] = pack
     end
   end
 
