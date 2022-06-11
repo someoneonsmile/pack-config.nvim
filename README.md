@@ -44,11 +44,7 @@ M.resources = function()
   }
 end
 
-M.after = function()
-  return {
-    '[other_pack_name]'
-  }
-end
+M.after = { '[other_pack_name]' }
 
 -- pack setup config
 M.setup = function()
