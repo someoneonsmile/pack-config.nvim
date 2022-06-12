@@ -39,6 +39,7 @@ M.is_pack = true
 
 M.resources = function()
   return {
+    -- resource
     {
       '[resource_url]',
       as = '',
@@ -50,7 +51,8 @@ M.resources = function()
       opt = true,
       run = function() end,
       rely = {
-        '[other_resource_url]'
+        -- nested resource
+        {'[other_resource_url]', rely = {}}
       },
     },
   }
@@ -122,7 +124,6 @@ M.is_pack = function(pack) return true end
 
 -- parse the pack file to the format
 M.parse = function(pack)
-
 return {
   name = '',
   resources = string, table or function,
