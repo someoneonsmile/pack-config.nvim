@@ -22,4 +22,16 @@ M.to_absolute_path = function(root_path, relative_paths)
   end, relative_paths)
 end
 
+-- ----------------------------------------------------------------------
+--    - path variant -
+-- ----------------------------------------------------------------------
+
+M.path_variant = function(path)
+  local paths = {}
+  paths[path:gsub('/', '.')] = true
+  paths[path:gsub('%.', '/')] = true
+  paths[path] = true
+  return vim.tbl_keys(paths)
+end
+
 return M

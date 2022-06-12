@@ -1,3 +1,4 @@
+local convert = require('pack-config.util.convert')
 local builtin_scanners = function()
   return {
     require('pack-config.scanner.fd'),
@@ -7,7 +8,7 @@ end
 
 local available_builtin_scanners = function()
   return vim.tbl_filter(function(scanner)
-    return scanner.exist()
+    return convert.to_bool(scanner.exist)
   end, builtin_scanners())
 end
 

@@ -1,13 +1,14 @@
+local convert = require('pack-config.util.convert')
 local builtin_loaders = function()
   return {
-    require('pack-config.loader.paq'),
     require('pack-config.loader.packer'),
+    require('pack-config.loader.paq'),
   }
 end
 
 local available_builtin_loaders = function()
   return vim.tbl_filter(function(loader)
-    return loader.exist()
+    return convert.to_bool(loader.exist)
   end, builtin_loaders())
 end
 

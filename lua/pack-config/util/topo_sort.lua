@@ -40,6 +40,7 @@ local function print_circle_graph(graph)
     end
     table.remove(paths)
   end
+
   print_circle(next(graph))
 end
 

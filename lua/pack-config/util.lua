@@ -39,12 +39,12 @@ end
 
 -- filter and map
 M.tbl_filter_map = function(tbl, filters, maps)
-  tbl = M.confirm_table(tbl)
+  tbl = M.convert.force_to_table(tbl)
   if M.tbl_isempty(tbl) then
     return tbl
   end
-  filters = M.confirm_table(filters)
-  maps = M.confirm_table(maps)
+  filters = M.convert.force_to_table(filters)
+  maps = M.convert.force_to_table(maps)
   if M.tbl_isempty(filters) and M.tbl_isempty(maps) then
     return tbl
   end
@@ -60,6 +60,14 @@ M.tbl_filter_map = function(tbl, filters, maps)
     end
   end
   return result
+end
+
+M.tbl_filter = function(tbl, filters)
+  return M.tbl_filter_map(tbl, filters)
+end
+
+M.tbl_map = function(tbl, maps)
+  return M.tbl_filter_map(tbl, nil, maps)
 end
 
 M.deep_merge_opts = function(default_opts, opts)
@@ -80,39 +88,6 @@ end
 
 M.tbl_force_deep_extend = function(...)
   return vim.tbl_deep_extend('force', M.with_default {}(...))
-end
-
-M.confirm_table = function(tbl)
-  if type(tbl) == 'nil' or type(tbl) == 'table' then
-    return tbl
-  end
-  return { tbl }
-end
-
-M.function_or_table = function(tbl, error_arg_name)
-  if type(tbl) == 'function' then
-    return { tbl }
-  elseif type(tbl) == 'table' then
-    return tbl
-  end
-
-  if error_arg_name ~= nil then
-    error('%s require function or table', error_arg_name)
-  end
-  return tbl
-end
-
-M.string_or_table = function(tbl, error_arg_name)
-  if type(tbl) == 'string' then
-    return { tbl }
-  elseif type(tbl) == 'table' then
-    return tbl
-  end
-
-  if error_arg_name ~= nil then
-    error('%s require string or table', error_arg_name)
-  end
-  return tbl
 end
 
 -- ----------------------------------------------------------------------
@@ -193,24 +168,12 @@ M.download_pack = function(pack)
 end
 
 -- ----------------------------------------------------------------------
---    - path variant -
--- ----------------------------------------------------------------------
-
-M.path_variant = function(path)
-  local paths = {}
-  paths[path:gsub('/', '.')] = true
-  paths[path:gsub('%.', '/')] = true
-  paths[path] = true
-  return vim.tbl_keys(paths)
-end
-
--- ----------------------------------------------------------------------
 --    - update require load file -
 -- ----------------------------------------------------------------------
 
 M.loaded_udpate = function(pack_name, pack)
   local luacache = (_G.__luacache or {}).cache
-  local paths = M.path_variant(pack_name)
+  local paths = M.path.path_variant(pack_name)
   for _, path in pairs(paths) do
     package.loaded[path] = pack
     if luacache then

@@ -7,6 +7,8 @@ local default_cfg = {
   loader_opts = {},
   scanner = nil,
   scanner_opts = {},
+  parser = nil,
+  parser_opts = {},
   env = {
     -- pack_getter
     pack = function(pack_name)
@@ -38,10 +40,10 @@ local load = function(scan_paths)
     local ok, pack = pcall(dofile, pack_path, 'bt')
     if not ok then
       log.error('load lua file failed, path = ' .. pack_path, pack)
-    elseif not packer.is_pack(pack) then
+    elseif not cfg.parser.is_pack(pack) then
       log.error('not a pack. path =', pack_path)
     else
-      valid_packs[pack.name] = pack
+      valid_packs[pack.name] = cfg.parser.parse(pack)
     end
   end
 
@@ -59,9 +61,17 @@ end
 M.setup = util.fn.once(function(opts)
   cfg = util.deep_merge_opts(default_cfg, opts)
   cfg.scanner = require('pack-config.scanner').with_default(cfg.scanner, false)
+  cfg.parser = require('pack-config.parser').with_default(cfg.parser, false)
   cfg.loader = require('pack-config.loader').with_default(cfg.loader, false)
-  cfg.scanner.init(cfg.scanner_opts)
-  cfg.loader.init(cfg.loader_opts)
+  if type(cfg.scanner.init) == 'function' then
+    cfg.scanner.init(cfg.scanner_opts)
+  end
+  if type(cfg.parser.init) == 'function' then
+    cfg.parser.init(cfg.parser_opts)
+  end
+  if type(cfg.loader.init) == 'function' then
+    cfg.loader.init(cfg.loader_opts)
+  end
   packer.setup {
     loader = cfg.loader,
     env = cfg.env,

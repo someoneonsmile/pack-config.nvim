@@ -3,6 +3,7 @@ local fn = require('pack-config.util.fn')
 local log = require('pack-config.log')
 local Context = require('pack-config.context')
 local Const = require('pack-config.const')
+local convert = util.convert
 
 local loader
 
@@ -17,40 +18,28 @@ local deprecateds = {}
 
 -- 解析依赖
 local function parse_rely(pack_resources)
+  pack_resources = convert.to_table_n(pack_resources, 2)
   local results = {}
   if util.tbl_isempty(pack_resources) then
     return results
   end
   for _, pack_resource in pairs(pack_resources) do
-    if util.tbl_notempty(pack_resource.rely) then
+    local rely = convert.to_table_n(pack_resource.rely, 2)
+    if util.tbl_notempty(rely) then
       vim.list_extend(
         results,
-        parse_rely(vim.tbl_flatten(vim.tbl_map(
-          function(it)
-            return it.rely
-          end,
-          vim.tbl_filter(function(it)
-            return util.tbl_notempty(it.rely)
-          end, pack_resource.rely)
-        )))
+        parse_rely(vim.tbl_flatten(util.tbl_filter_map(rely, util.tbl_notempty, function(it)
+          return it.rely
+        end)))
       )
-      vim.list_extend(
-        results,
-        vim.tbl_map(function(it)
-          return util.string_or_table(it)
-        end, pack_resource.rely)
-      )
+      vim.tbl_map(function(it)
+        it.rely = nil
+        return it
+      end, rely)
+      vim.list_extend(results, rely)
     end
   end
   return results
-end
-
-M.is_pack = function(pack)
-  return pack['is_pack']
-    and type(pack['name']) == 'string'
-    and type(pack['resources']) == 'function'
-    and type(pack['setup']) == 'function'
-    and type(pack['config']) == 'function'
 end
 
 -- 启动设置
@@ -63,19 +52,17 @@ end
 -- 注册插件
 M.regist = function(packs)
   for _, pack in pairs(packs) do
-    if M.is_pack(pack) then
-      local pack_resources = pack.resources()
-      util.list_extend(relys, parse_rely(pack_resources))
-      util.list_extend(resources, pack_resources)
-      util.tbl_force_extend(deprecateds, util.list_to_map(pack_resources.deprecated, fn.first, fn.orign))
-      pack.setup = fn.once(fn.with_env(env)(pack.setup))
-      pack.config = fn.once(fn.with_env(env)(pack.config))
+    local pack_resources = pack.resources
+    util.list_extend(relys, parse_rely(pack_resources))
+    util.list_extend(resources, pack_resources)
+    util.tbl_force_extend(deprecateds, util.list_to_map(pack_resources.deprecated, fn.first, fn.orign))
+    pack.setup = fn.once(fn.with_env(env)(pack.setup))
+    pack.config = fn.once(fn.with_env(env)(pack.config))
 
-      if regist_packs:get(pack.name) ~= nil then
-        error(pack.name .. ' already exists', vim.log.levels.ERROR)
-      end
-      regist_packs:set(pack.name, pack)
+    if regist_packs:get(pack.name) ~= nil then
+      error(pack.name .. ' already exists', vim.log.levels.ERROR)
     end
+    regist_packs:set(pack.name, pack)
   end
   relys = util.list_distinct(fn.first, relys)
   resources = util.list_distinct(fn.first, resources)
@@ -119,7 +106,7 @@ M.done = function()
   local sorter = util.topo_sort:new(function(_, v)
     return v.name
   end, function(v)
-    return util.fn.with_default {}(util.string_or_table(v.after))
+    return util.fn.with_default {}(v.after)
   end)
   local regist_packs_sorted = sorter:sort(regist_packs)
 

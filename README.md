@@ -7,15 +7,27 @@ Modular package, Unified package installation and configuration in same file, de
 ```lua
 
 require('pack-config').setup {
+  -- optional
+  -- default to select from the order list [packer.nvim, paq-nvim] if exists
   loader = require('pack-config.loader.packer'),
+  -- optional
   loader_opts = {},
+  -- optional
+  -- default to select from the order list [fd, vim.loop.fs_scandir] if exists
   scanner = require('pack-config.scanner.fd'),
+  -- optional
   scanner_opts = {},
+  -- optional, default
+  parser = require('pack-config.parser.lua'),
+  -- optional
+  parser_opts = {},
+
+  -- must
   scan_paths = { '/path/subpath/pre', '/path/subpath' },
 }
 ```
 
-## Pack File Format
+## Default pack File Format
 
 ```lua
 -- pack config
@@ -49,6 +61,7 @@ M.after = { '[other_pack_name]' }
 -- pack setup config
 M.setup = function()
 
+  -- use pack fn to load other pack
   local other_pack = pack('other_pack_name')
 
 end
@@ -69,6 +82,77 @@ return M
 
 `vim.fn.stdpath('data') .. '/site/pack/packer/start'`: pack loader download location
 
+## Custom scanner, parser and loader
+
+### Scanner
+
+to get the pack file
+
+#### Format
+
+```lua
+local M = {}
+
+M.exist = bool or function return bool
+
+-- optional
+M.init = function(opts) end
+
+-- scan the paths return the pack_files
+M.scan = function(paths)
+
+end
+```
+
+### Parser
+
+to parse the pack file
+
+#### Format
+
+```lua
+local M = {}
+
+M.exist = bool or function return bool
+
+-- optional
+M.init = function(opts) end
+
+M.is_pack = function(pack) return true end
+
+-- parse the pack file to the format
+M.parse = function(pack)
+
+return {
+  name = '',
+  resources = string, table or function,
+  after = string, table or function,
+  setup = function() end
+  config = function() end
+}
+end
+```
+
+### Loader
+
+use package manager to load the pack
+
+#### Format
+
+```lua
+local M = {}
+
+M.exist = bool or function return bool
+
+-- optional
+M.init = function(opts) end
+
+-- parse the pack file to the format
+M.load = function(packs)
+
+end
+```
+
 ## TODO
 
 - [ ] lua check and style
@@ -78,7 +162,8 @@ return M
 - [x] external lua file support
 - [x] topologic sort
   - [x] circle check
-- [x] pack_name repeat error
+- [x] pack name repeat error
 - [x] refact log file (level with endpoin)
 - [x] log use vim.notify
 - [x] setfenv with setup and config
+- [x] split parser
