@@ -1,4 +1,4 @@
-local Set = require('pack-config.util.set')
+local Set = require('pack-config.util').set
 local M = {}
 
 M.is_set = function(self)
@@ -86,6 +86,7 @@ M.__ipairs = function(tbl)
       return i, v
     end
   end
+
   -- return iterator function, table, and starting point
   return stateless_iter, tbl, 0
 end

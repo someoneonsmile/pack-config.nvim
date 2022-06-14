@@ -1,4 +1,4 @@
-local convert = require('pack-config.util.convert')
+local convert = require('pack-config.util').convert
 local builtin_parsers = function()
   return {
     require('pack-config.parser.lua'),

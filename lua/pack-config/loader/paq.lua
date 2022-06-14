@@ -1,6 +1,6 @@
 local log = require('pack-config.log')
 local util = require('pack-config.util')
-local fn = require('pack-config.util.fn')
+local fn = util.fn
 
 local default_cfg = {
   auto_download = true,
