@@ -56,8 +56,9 @@ M.regist = function(packs)
     util.list_extend(relys, parse_rely(pack_resources))
     util.list_extend(resources, pack_resources)
     util.tbl_force_extend(deprecateds, util.list_to_map(pack_resources.deprecated, fn.first, fn.orign))
-    pack.setup = fn.once(fn.with_env(env)(pack.setup))
-    pack.config = fn.once(fn.with_env(env)(pack.config))
+    local with_env = fn.with_env(env)
+    pack.setup = fn.once(with_env(pack.setup))
+    pack.config = fn.once(with_env(pack.config))
 
     if regist_packs:get(pack.name) ~= nil then
       error(pack.name .. ' already exists', vim.log.levels.ERROR)
@@ -114,13 +115,13 @@ M.done = function()
   for _, pack in ipairs(regist_packs_sorted) do
     local ok, msg = pcall(pack.setup)
     if not ok then
-      log.error(msg)
+      log.error(pack.name .. '::setup', msg)
     end
   end
   for _, pack in ipairs(regist_packs_sorted) do
     local ok, msg = pcall(pack.config)
     if not ok then
-      log.error(msg)
+      log.error(pack.name .. '::config', msg)
     end
   end
 end
