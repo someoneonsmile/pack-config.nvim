@@ -13,7 +13,7 @@ require('pack-config').setup {
   -- optional
   loader_opts = {},
   -- optional
-  -- default to select from the order list [fd, vim.loop.fs_scandir] if exists
+  -- default to select from the order list [vim.loop.fs_scandir, fd] if exists
   scanner = require('pack-config.scanner.fd'),
   -- optional
   scanner_opts = {},
@@ -45,6 +45,7 @@ M.name = '[pack_name]'
 
 M.is_pack = true
 
+-- string, table or function,
 M.resources = function()
   return {
     -- resource
@@ -66,21 +67,21 @@ M.resources = function()
   }
 end
 
+-- string, table or function,
 M.after = { '[other_pack_name]' }
 
 -- pack setup config
 M.setup = function()
-
   -- use pack fn to load other pack
   local other_pack = pack('other_pack_name')
-
+  ...
 end
 
 -- pack config after all pack setup
 M.config = function()
-
+  -- use pack fn to load other pack
   local other_pack = pack('other_pack_name')
-
+  ...
 end
 
 return M

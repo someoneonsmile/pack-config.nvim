@@ -1,8 +1,8 @@
 local convert = require('pack-config.util').convert
 local builtin_scanners = function()
   return {
-    require('pack-config.scanner.fd'),
     require('pack-config.scanner.uv'),
+    require('pack-config.scanner.fd'),
   }
 end
 
