@@ -1,9 +1,9 @@
 local util = require('pack-config.util')
-local fn = require('pack-config.util.fn')
 local log = require('pack-config.log')
 local Context = require('pack-config.context')
 local Const = require('pack-config.const')
 local convert = util.convert
+local fn = util.fn
 
 local loader
 
