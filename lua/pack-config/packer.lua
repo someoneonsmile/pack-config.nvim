@@ -51,12 +51,12 @@ end
 
 -- 注册插件
 M.regist = function(packs)
+  local with_env = fn.with_env(env)
   for _, pack in pairs(packs) do
     local pack_resources = pack.resources
     util.list_extend(relys, parse_rely(pack_resources))
     util.list_extend(resources, pack_resources)
     util.tbl_force_extend(deprecateds, util.list_to_map(pack_resources.deprecated, fn.first, fn.orign))
-    local with_env = fn.with_env(env)
     pack.setup = fn.once(with_env(pack.setup))
     pack.config = fn.once(with_env(pack.config))
 
@@ -107,7 +107,7 @@ M.done = function()
   local sorter = util.topo_sort:new(function(_, v)
     return v.name
   end, function(v)
-    return util.fn.with_default {}(v.after)
+    return util.fn.with_default {} (v.after)
   end)
   local regist_packs_sorted = sorter:sort(regist_packs)
 
