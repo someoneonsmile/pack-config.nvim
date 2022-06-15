@@ -177,3 +177,5 @@ end
 - [x] log use vim.notify
 - [x] setfenv with setup and config
 - [x] split parser
+- [ ] profile
+- [ ] parallel
