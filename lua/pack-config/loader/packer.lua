@@ -5,7 +5,7 @@ local fn = util.fn
 local default_cfg = {
   auto_download = true,
   pack_self = true,
-  package = 'packer',
+  outer_config = {},
 }
 
 local cfg = default_cfg
@@ -50,9 +50,7 @@ M.init = fn.once(function(opts)
   end
 
   packer.reset()
-  packer.init {
-    plugin_package = cfg.package,
-  }
+  packer.init(cfg.outer_config)
 end, { notify = vim.log.levels.INFO })
 
 -- @param pack
