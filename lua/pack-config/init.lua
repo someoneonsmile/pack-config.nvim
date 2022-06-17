@@ -1,6 +1,7 @@
 local packer = require('pack-config.packer')
 local util = require('pack-config.util')
 local log = require('pack-config.log')
+local pd = util.predicate
 
 local default_cfg = {
   loader = nil,
@@ -63,13 +64,13 @@ M.setup = util.fn.once(function(opts)
   cfg.scanner = require('pack-config.scanner').with_default(cfg.scanner, false)
   cfg.parser = require('pack-config.parser').with_default(cfg.parser, false)
   cfg.loader = require('pack-config.loader').with_default(cfg.loader, false)
-  if type(cfg.scanner.init) == 'function' then
+  if pd.is_function(cfg.scanner.init) then
     cfg.scanner.init(cfg.scanner_opts)
   end
-  if type(cfg.parser.init) == 'function' then
+  if pd.is_function(cfg.parser.init) then
     cfg.parser.init(cfg.parser_opts)
   end
-  if type(cfg.loader.init) == 'function' then
+  if pd.is_function(cfg.loader.init) then
     cfg.loader.init(cfg.loader_opts)
   end
   packer.setup {
