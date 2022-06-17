@@ -4,6 +4,8 @@ local Context = require('pack-config.context')
 local Const = require('pack-config.const')
 local convert = util.convert
 local fn = util.fn
+local pd = util.predicate
+local tbl = util.tbl
 
 local loader
 
@@ -20,15 +22,15 @@ local deprecateds = {}
 local function parse_rely(pack_resources)
   pack_resources = convert.to_table_n(pack_resources, 2)
   local results = {}
-  if util.tbl_isempty(pack_resources) then
+  if pd.is_empty(pack_resources) then
     return results
   end
   for _, pack_resource in pairs(pack_resources) do
     local rely = convert.to_table_n(pack_resource.rely, 2)
-    if util.tbl_notempty(rely) then
-      vim.list_extend(
+    if pd.not_empty(rely) then
+      tbl.list_extend(
         results,
-        parse_rely(vim.tbl_flatten(util.tbl_filter_map(rely, util.tbl_notempty, function(it)
+        parse_rely(vim.tbl_flatten(tbl.tbl_filter_map(rely, pd.not_empty, function(it)
           return it.rely
         end)))
       )
@@ -36,7 +38,7 @@ local function parse_rely(pack_resources)
         it.rely = nil
         return it
       end, rely)
-      vim.list_extend(results, rely)
+      tbl.list_extend(results, rely)
     end
   end
   return results
@@ -54,9 +56,9 @@ M.regist = function(packs)
   local with_env = fn.with_env(env)
   for _, pack in pairs(packs) do
     local pack_resources = pack.resources
-    util.list_extend(relys, parse_rely(pack_resources))
-    util.list_extend(resources, pack_resources)
-    util.tbl_force_extend(deprecateds, util.list_to_map(pack_resources.deprecated, fn.first, fn.orign))
+    tbl.list_extend(relys, parse_rely(pack_resources))
+    tbl.list_extend(resources, pack_resources)
+    tbl.tbl_force_extend(deprecateds, tbl.list_to_map(pack_resources.deprecated, fn.first, fn.orign))
     pack.setup = fn.once(with_env(pack.setup))
     pack.config = fn.once(with_env(pack.config))
 
@@ -65,8 +67,8 @@ M.regist = function(packs)
     end
     regist_packs:set(pack.name, pack)
   end
-  relys = util.list_distinct(fn.first, relys)
-  resources = util.list_distinct(fn.first, resources)
+  relys = tbl.list_distinct(fn.first, relys)
+  resources = tbl.list_distinct(fn.first, resources)
 end
 
 -- 获取 pack
@@ -81,7 +83,7 @@ local deprecated_tip = function(items)
     local path = fn.first(v)
     local deprecated_config = deprecateds[path]
     if deprecated_config then
-      util.list_extend(
+      tbl.list_extend(
         tips,
         string.fmt('%s is deprecated, replace with %s', deprecated_config[1], deprecated_config.replace_with)
       )
@@ -95,9 +97,9 @@ end
 
 -- 插件管理器注册插件
 M.done = function()
-  local all_resources = util.list_distinct(fn.first, util.list_extend({}, relys, resources))
+  local all_resources = tbl.list_distinct(fn.first, tbl.list_extend({}, relys, resources))
   deprecated_tip(all_resources)
-  log.debug('pack loader will load :', vim.inspect(all_resources))
+  log.debug('pack loader will load :', all_resources)
   loader.load(all_resources)
   if regist_packs:is_empty() then
     return
@@ -107,7 +109,7 @@ M.done = function()
   local sorter = util.topo_sort:new(function(_, v)
     return v.name
   end, function(v)
-    return util.fn.with_default {} (v.after)
+    return fn.with_default {}(v.after)
   end)
   local regist_packs_sorted = sorter:sort(regist_packs)
 

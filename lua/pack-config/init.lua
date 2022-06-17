@@ -1,7 +1,9 @@
 local packer = require('pack-config.packer')
 local util = require('pack-config.util')
 local log = require('pack-config.log')
+local fn = util.fn
 local pd = util.predicate
+local tbl = util.tbl
 
 local default_cfg = {
   loader = nil,
@@ -27,7 +29,7 @@ local cfg = default_cfg
 local M = {}
 
 local load = function(scan_paths)
-  if util.tbl_isempty(scan_paths) then
+  if pd.tbl_isempty(scan_paths) then
     log.warn('scan_paths is empty')
     return
   end
@@ -59,8 +61,8 @@ end
 --  opts.loader: loader builtin or custom
 --  opts.loader_opts: control the loader init action
 --  opts.env: env to pack setup/config
-M.setup = util.fn.once(function(opts)
-  cfg = util.deep_merge_opts(default_cfg, opts)
+M.setup = fn.once(function(opts)
+  cfg = tbl.tbl_force_deep_extend(default_cfg, opts)
   cfg.scanner = require('pack-config.scanner').with_default(cfg.scanner, false)
   cfg.parser = require('pack-config.parser').with_default(cfg.parser, false)
   cfg.loader = require('pack-config.loader').with_default(cfg.loader, false)

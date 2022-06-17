@@ -1,4 +1,5 @@
 local util = require('pack-config.util')
+local tbl = util.tbl
 local M = {}
 
 M.to_table = function(v)
@@ -25,7 +26,7 @@ function M.to_table_n(t, n)
     return t
   end
   t = M.to_table(t)
-  return util.tbl_map(t, function(t)
+  return tbl.tbl_map(t, function(t)
     return M.to_table_n(t, n - 1)
   end)
 end

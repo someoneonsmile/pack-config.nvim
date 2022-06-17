@@ -1,6 +1,7 @@
 local log = require('pack-config.log')
 local util = require('pack-config.util')
 local fn = util.fn
+local tbl = util.tbl
 
 local default_cfg = {
   auto_download = true,
@@ -23,7 +24,7 @@ M.exist = function()
 end
 
 M.init = fn.once(function(opts)
-  cfg = util.deep_merge_opts(default_cfg, opts)
+  cfg = tbl.tbl_force_deep_extend(default_cfg, opts)
 
   if not M.exist() then
     if cfg.auto_download then
@@ -32,7 +33,7 @@ M.init = fn.once(function(opts)
           dist_dir = vim.fn.stdpath('data') .. '/site/pack/init/start/',
           name = 'packer',
           path = 'wbthomason/packer.nvim',
-          prompt = 'Download packer.nvim ? (y for yes)',
+          prompt = 'Download packer.nvim? [y/N]',
         },
         'Download packer.nvim fail'
       )

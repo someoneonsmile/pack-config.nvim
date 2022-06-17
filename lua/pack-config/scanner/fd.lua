@@ -1,4 +1,5 @@
 local util = require('pack-config.util')
+local tbl = util.tbl
 
 local default_cfg = {
   extension = 'lua',
@@ -20,7 +21,7 @@ M.exist = function()
 end
 
 M.init = function(opts)
-  cfg = util.deep_merge_opts(default_cfg, opts)
+  cfg = tbl.tbl_force_deep_extend(default_cfg, opts)
   if not M.exist() then
     error('not find fd command', vim.log.levels.ERROR)
   end
