@@ -1,15 +1,13 @@
 local util = require('pack-config.util')
 
 local default_cfg = {
-  extension = 'lua',
-  pattern = '.',
+  max_depth = nil,
+  match_fn = function(full_name, name, type)
+    return vim.endswith(name, '.lua')
+  end,
 }
 
 local cfg = default_cfg
-
-local match = function(s)
-  return vim.endswith(s, '.' .. cfg.extension) and s:match(cfg.pattern)
-end
 
 -- ----------------------------------------------------------------------
 --    - M -
@@ -31,13 +29,13 @@ M.scan = function(paths)
   local result_paths = {}
 
   local function callback(full_name, name, type)
-    if match(name) then
+    if cfg.match_fn(full_name, name, type) then
       table.insert(result_paths, full_name)
     end
   end
 
   for _, path in ipairs(paths) do
-    util.fs.walk_dir(path, callback)
+    util.fs.walk_dir(path, callback, cfg.max_depth)
   end
 
   return result_paths
@@ -47,13 +45,13 @@ M.scan_async = function(paths)
   local result_paths = {}
 
   local function callback(full_name, name, type)
-    if match(name) then
+    if cfg.match_fn(full_name, name, type) then
       table.insert(result_paths, full_name)
     end
   end
 
   for _, path in ipairs(paths) do
-    util.fs.walk_dir_async(path, callback)
+    util.fs.walk_dir_async(path, callback, cfg.max_depth)
   end
 
   return result_paths

@@ -4,6 +4,7 @@ local tbl = util.tbl
 local default_cfg = {
   extension = 'lua',
   pattern = '.',
+  max_depth = nil,
 }
 
 local cfg = default_cfg
@@ -35,6 +36,9 @@ M.scan = function(scan_paths)
   local fd_opts = {}
   if cfg.extension then
     table.insert(fd_opts, '--extension ' .. cfg.extension)
+  end
+  if cfg.max_depth then
+    table.insert(fd_opts, '-d ' .. cfg.max_depth)
   end
   table.insert(fd_opts, cfg.pattern)
 
