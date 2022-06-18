@@ -66,11 +66,11 @@ M.tbl_map = function(tbl, maps)
 end
 
 M.tbl_force_extend = function(...)
-  return vim.tbl_extend('force', fn.with_default {} (...))
+  return vim.tbl_extend('force', fn.with_default {}(...))
 end
 
 M.tbl_force_deep_extend = function(...)
-  return vim.tbl_deep_extend('force', fn.with_default {} (...))
+  return vim.tbl_deep_extend('force', fn.with_default {}(...))
 end
 
 -- ----------------------------------------------------------------------

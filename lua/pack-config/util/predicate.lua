@@ -18,11 +18,11 @@ M.is_empty = function(v)
     return true
   end
 
-  if t == 'table' and not vim.tbl_isempty(v) then
+  if t == 'table' and vim.tbl_isempty(v) then
     return true
   end
 
-  if t == 'string' and vim.trim(v) ~= '' then
+  if t == 'string' and vim.trim(v) == '' then
     return true
   end
 

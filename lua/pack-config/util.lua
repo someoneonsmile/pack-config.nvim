@@ -50,14 +50,16 @@ end
 M.lazy_require = function(require_path)
   return setmetatable({}, {
     __index = function(self, k)
-      self[k] = require(require_path)[k]
-      return self[k]
+      local v = require(require_path)[k]
+      self[k] = v
+      return v
     end,
   })
 end
 
 setmetatable(M, {
   __index = function(self, k)
+    -- allow the sub model cross reference
     local v = M.lazy_require('pack-config.util.' .. k)
     self[k] = v
     return v
