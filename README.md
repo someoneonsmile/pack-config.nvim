@@ -34,7 +34,9 @@ require('pack-config').setup {
   },
 
   -- optional, provide convenience for debug, bisect
-  block_list = {},
+  block_list = {
+      '[pack_name]'
+    },
 }
 ```
 
