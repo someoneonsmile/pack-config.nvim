@@ -56,7 +56,6 @@ M.resources = function()
       tag = '',
       commit = '',
       pin = '',
-      ft = {},
       opt = true,
       run = function() end,
       rely = {
