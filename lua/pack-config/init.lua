@@ -4,6 +4,7 @@ local log = require('pack-config.log')
 local fn = util.fn
 local pd = util.predicate
 local tbl = util.tbl
+local Set = util.set
 
 local default_cfg = {
   loader = nil,
@@ -12,6 +13,7 @@ local default_cfg = {
   scanner_opts = {},
   parser = nil,
   parser_opts = {},
+  block_list = {},
   env = {
     -- pack_getter
     pack = function(pack_name)
@@ -34,6 +36,8 @@ local load = function(scan_paths)
     return
   end
 
+  local block_set = Set:from_list(cfg.block_list)
+
   -- scan lua file
   local pack_paths = cfg.scanner.scan(scan_paths)
 
@@ -45,6 +49,8 @@ local load = function(scan_paths)
       log.error('load lua file failed, path = ' .. pack_path, pack)
     elseif not cfg.parser.is_pack(pack) then
       log.error('not a pack. path =', pack_path)
+    elseif Set.contains(block_set, pack.name) then
+      log.debug('block pack: ', pack.name)
     else
       valid_packs[pack.name] = cfg.parser.parse(pack)
     end
