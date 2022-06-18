@@ -10,9 +10,10 @@ M.to_table = function(v)
     result = v
   end
 
-  if type(result) == 'string' then
+  local t = type(result)
+  if t == 'string' then
     result = { result }
-  elseif type(result) == 'table' then
+  elseif t == 'table' then
     result = result
   else
     result = {}
@@ -26,7 +27,7 @@ function M.to_table_n(t, n)
     return t
   end
   t = M.to_table(t)
-  return tbl.tbl_map(t, function(t)
+  return tbl.tbl_map_filter(t, function(t)
     return M.to_table_n(t, n - 1)
   end)
 end

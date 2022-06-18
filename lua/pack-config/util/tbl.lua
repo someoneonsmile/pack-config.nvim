@@ -32,37 +32,30 @@ M.tbl_reduce = function(tbl, init, f)
   return result
 end
 
--- filter and map
-M.tbl_filter_map = function(tbl, filters, maps)
+-- table filter and map
+M.tbl_map_filter = function(tbl, ...)
   tbl = convert.force_to_table(tbl)
   if pd.tbl_isempty(tbl) then
     return tbl
   end
-  filters = convert.force_to_table(filters)
-  maps = convert.force_to_table(maps)
-  if pd.tbl_isempty(filters) and pd.tbl_isempty(maps) then
+  local map_filters = { ... }
+  if pd.tbl_isempty(map_filters) then
     return tbl
   end
   local result = {}
   for key, value in pairs(tbl) do
-    local pass = M.tbl_reduce(filters, true, function(r, filter)
-      return r and filter(value, key)
+    local r = M.tbl_reduce(map_filters, value, function(r, map_filter)
+      -- if the reducer or map_filter is nil then return
+      if pd.is_nil(r) or pd.is_nil(map_filter) then
+        return r
+      end
+      return map_filter(r, key)
     end)
-    if pass then
-      result[key] = M.tbl_reduce(maps, value, function(r, map)
-        return map(r)
-      end)
+    if pd.not_nil(r) then
+      result[key] = r
     end
   end
   return result
-end
-
-M.tbl_filter = function(tbl, filters)
-  return M.tbl_filter_map(tbl, filters)
-end
-
-M.tbl_map = function(tbl, maps)
-  return M.tbl_filter_map(tbl, nil, maps)
 end
 
 M.tbl_force_extend = function(...)
@@ -110,6 +103,33 @@ M.list_to_map = function(list, key_extractor, value_extractor)
     end
   end
   return result_map
+end
+
+-- list map_filter
+M.list_map_filter = function(tbl, ...)
+  tbl = convert.force_to_table(tbl)
+  if pd.tbl_isempty(tbl) then
+    return tbl
+  end
+  local map_filters = { ... }
+  if pd.tbl_isempty(map_filters) then
+    return tbl
+  end
+  local result = {}
+  for _, value in ipairs(tbl) do
+    local r = M.tbl_reduce(map_filters, value, function(r, map_filter)
+      -- if reducer or map_filter is nil then return
+      if pd.is_nil(r) or pd.is_nil(map_filter) then
+        return r
+      end
+      return map_filter(r)
+    end)
+    -- drop the nil value
+    if pd.not_nil(r) then
+      table.insert(result, r)
+    end
+  end
+  return result
 end
 
 return M
