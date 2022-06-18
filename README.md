@@ -25,13 +25,16 @@ require('pack-config').setup {
   -- must
   scan_paths = { '/path/subpath/pre', '/path/subpath' },
 
-  -- env for setup and config fn
+  -- optional, env for setup and config fn
   env = {
     -- for get other pack
     pack = function(name)
       ...
     end
-  }
+  },
+
+  -- optional, provide convenience for debug, bisect
+  block_list = {},
 }
 ```
 
