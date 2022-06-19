@@ -12,12 +12,11 @@ ignore = {
 }
 
 -- Global objects defined by the C code
-stds.custom = {
-  globals = {
-  },
-  read_globals = {
-    "vim",
-  },
+globals = {
+}
+
+read_globals = {
+  "vim",
 }
 
 std = "luajit+custom"
