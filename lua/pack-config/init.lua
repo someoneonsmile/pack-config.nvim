@@ -17,7 +17,13 @@ local default_cfg = {
   env = {
     -- pack_getter
     pack = function(pack_name)
-      return packer.get_pack(pack_name)
+      return setmetatable({}, {
+        __index = function(self, name)
+          local v = packer.get_pack(pack_name)[name]
+          self[name] = v
+          return v
+        end,
+      })
     end,
   },
 }
