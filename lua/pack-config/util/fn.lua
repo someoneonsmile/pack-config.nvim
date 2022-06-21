@@ -63,9 +63,12 @@ end
 
 M.with_default = function(default_value)
   return function(...)
-    return M.unpack(vim.tbl_map(function(it)
-      return it or default_value
-    end, { ... }))
+    local r = {}
+    local l = select('#', ...)
+    for i = 1, l do
+      table.insert(r, select(i, ...) or default_value)
+    end
+    return unpack(r)
   end
 end
 
@@ -175,18 +178,6 @@ M.drop_last = M.curry(function(n, ...)
   end
   return M.take(len - n, ...)
 end)
-
--- ----------------------------------------------------------------------
---    - return a function that map the table nil value to default_value -
--- ----------------------------------------------------------------------
-
-M.tbl_with_default = function(default_value)
-  return function(tbl)
-    return vim.tbl_map(function(it)
-      return it or default_value
-    end, tbl or {})
-  end
-end
 
 -- ----------------------------------------------------------------------
 --    - avoid call on nil value -
