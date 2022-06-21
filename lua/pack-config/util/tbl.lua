@@ -66,6 +66,14 @@ M.tbl_force_deep_extend = function(...)
   return vim.tbl_deep_extend('force', fn.with_default {}(...))
 end
 
+M.tbl_keep_extend = function(...)
+  return vim.tbl_extend('keep', fn.with_default {}(...))
+end
+
+M.tbl_keep_deep_extend = function(...)
+  return vim.tbl_deep_extend('keep', fn.with_default {}(...))
+end
+
 -- ----------------------------------------------------------------------
 --    - list op -
 -- ----------------------------------------------------------------------
