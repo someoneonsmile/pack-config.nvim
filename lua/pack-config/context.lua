@@ -13,7 +13,7 @@ local contexts = {}
 
 function M:new(name, o)
   if contexts[name] then
-    error(string.format('context_name: %s, has exist'))
+    error(string.format('context_name: %s, has exist', name))
   end
   o = o or {}
   setmetatable(o, self)
