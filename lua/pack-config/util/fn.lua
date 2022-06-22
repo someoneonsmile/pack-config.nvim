@@ -1,5 +1,6 @@
 local Context = require('pack-config.context')
 local Const = require('pack-config.const')
+local Id = require('pack-config.util').id
 
 local M = {}
 
@@ -7,12 +8,7 @@ local M = {}
 --    - once (avoid run more than once) -
 -- ----------------------------------------------------------------------
 
-local no = 0
-
-local function incr()
-  no = no + 1
-  return 'function_' .. no
-end
+local auto_id = Id:new('fn_once')
 
 -- use the context
 -- maybe can replace with context
@@ -21,7 +17,7 @@ local conf = Context:new(Const.util_fn_once_key)
 
 M.once = function(f, opts)
   opts = opts or {}
-  local key = (opts.prefix_name or 'global') .. '/' .. (opts.name or incr())
+  local key = (opts.prefix_name or 'global') .. '/' .. (opts.name or auto_id:inc())
 
   return function(...)
     if conf[key] then

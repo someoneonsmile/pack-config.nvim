@@ -1,4 +1,4 @@
-describe('fn test', function()
+describe('util test', function()
   local eq = assert.same
   local neq = assert.are_not.same
   local util = require('pack-config.util')
@@ -46,5 +46,23 @@ describe('fn test', function()
     )
     eq({ '1', { '1', '2', '3' } }, tbl_force_deep_extend(nil, { 1, { 1, 2 } }, { '1', { '1', '2', '3' } }))
     assert.are_not.same({ '1', { '1', '2', 3 } }, tbl_force_deep_extend(nil, { 1, { 1, 2, 3 } }, { '1', { '1', '2' } }))
+  end)
+
+  -- test auto id gen
+  it('auto gen id', function()
+    local auto_id = util.id:new('test')
+    assert.same(1, auto_id:inc())
+    assert.same(2, auto_id:inc())
+  end)
+
+  -- test fn once
+  it('fn once', function()
+    local a = 0
+    local once_fn = util.fn.once(function()
+      a = 1
+    end)
+    once_fn()
+    assert.same(1, a)
+    assert.same(1, a)
   end)
 end)

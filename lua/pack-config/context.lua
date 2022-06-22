@@ -1,5 +1,3 @@
-local predicate = require('pack-config.util').predicate
-
 local M = {}
 
 -- regist context to here
@@ -24,15 +22,15 @@ end
 
 local default_set_opts = {
   on_conflict = function(key, old, new)
-    return old
+    return new
   end,
 }
 
 -- self:set
 function M:set(key, value, opts)
-  opts = vim.tbl_deep_extend('force', default_set_opts, opts or {})
+  opts = vim.tbl_deep_extend('keep', opts or {}, default_set_opts)
   if self[key] then
-    if predicate.is_function(opts.on_conflict) then
+    if type(opts.on_conflict) == 'function' then
       self[key] = opts.on_conflict(key, self[k], value)
       return
     end
@@ -51,11 +49,15 @@ function M:is_empty()
 end
 
 -- global context
-M.g = M:new {}
+M.g = M:new('')
 
 -- get context
 M.get_context = function(name)
   return contexts[name]
+end
+
+M.print = function()
+  vim.pretty_print(contexts)
 end
 
 return M
