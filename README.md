@@ -46,11 +46,14 @@ require('pack-config').setup {
 -- pack config
 local M = {}
 
+-- must
 M.name = '[pack_name]'
 
+-- must
 M.is_pack = true
 
--- string, table or function,
+-- optional
+-- string, table or function
 M.resources = function()
   return {
     -- resource
@@ -71,7 +74,8 @@ M.resources = function()
   }
 end
 
--- string, table or function,
+-- optional
+-- string, table or function
 M.after = { '[other_pack_name]' }
 
 -- pack setup config
