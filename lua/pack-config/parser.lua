@@ -24,7 +24,7 @@ local with_default = function(parser, report_error)
 
   if vim.tbl_isempty(available_parsers) then
     if report_error then
-      error(string.format([[there is no pack parser available here.]]))
+      error([[there is no pack parser available here.]])
     end
     return parsers[1]
   else

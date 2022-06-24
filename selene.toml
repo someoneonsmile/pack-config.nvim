@@ -1,1 +1,6 @@
 std="vim"
+
+[rules]
+unused_variable = "allow"
+shadowing = "allow"
+global_usage = "allow"

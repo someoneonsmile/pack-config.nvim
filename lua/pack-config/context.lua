@@ -31,7 +31,7 @@ function M:set(key, value, opts)
   opts = vim.tbl_deep_extend('keep', opts or {}, default_set_opts)
   if self[key] then
     if type(opts.on_conflict) == 'function' then
-      self[key] = opts.on_conflict(key, self[k], value)
+      self[key] = opts.on_conflict(key, self[key], value)
       return
     end
   end

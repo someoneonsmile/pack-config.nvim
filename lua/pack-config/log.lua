@@ -56,8 +56,6 @@ local default_config = {
 -- {{{ NO NEED TO CHANGE
 local Log = {}
 
-local unpack = unpack or table.unpack
-
 local round = function(x, increment)
   increment = increment or 1
   x = x / increment
