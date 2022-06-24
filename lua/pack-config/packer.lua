@@ -81,7 +81,7 @@ local deprecated_tip = function(items)
     if deprecated_config then
       tbl.list_extend(
         tips,
-        string.fmt('%s is deprecated, replace with %s', deprecated_config[1], deprecated_config.replace_with)
+        string.format('%s is deprecated, replace with %s', deprecated_config[1], deprecated_config.replace_with)
       )
     end
   end

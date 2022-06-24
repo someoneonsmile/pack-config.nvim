@@ -32,37 +32,37 @@ function M.to_table_n(t, n)
   end)
 end
 
-M.force_to_table = function(tbl)
-  if type(tbl) == 'nil' or type(tbl) == 'table' then
-    return tbl
+M.force_to_table = function(v)
+  if type(v) == 'nil' or type(v) == 'table' then
+    return v
   end
-  return { tbl }
+  return { v }
 end
 
-M.function_to_table = function(tbl, error_arg_name)
-  if type(tbl) == 'function' then
-    return { tbl }
-  elseif type(tbl) == 'table' then
-    return tbl
+M.function_to_table = function(v, error_arg_name)
+  if type(v) == 'function' then
+    return { v }
+  elseif type(v) == 'table' then
+    return v
   end
 
   if error_arg_name ~= nil then
     error('%s require function or table', error_arg_name)
   end
-  return tbl
+  return v
 end
 
-M.string_to_table = function(tbl, error_arg_name)
-  if type(tbl) == 'string' then
-    return { tbl }
-  elseif type(tbl) == 'table' then
-    return tbl
+M.string_to_table = function(v, error_arg_name)
+  if type(v) == 'string' then
+    return { v }
+  elseif type(v) == 'table' then
+    return v
   end
 
   if error_arg_name ~= nil then
     error('%s require string or table', error_arg_name)
   end
-  return tbl
+  return v
 end
 
 M.to_bool = function(v)

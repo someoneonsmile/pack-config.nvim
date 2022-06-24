@@ -6,10 +6,10 @@
 -- This library is free software; you can redistribute it and/or modify it
 -- under the terms of the MIT license. See LICENSE for details.
 
-local p_debug = vim.fn.getenv('DEBUG_PLENARY')
-if p_debug == vim.NIL then
-  p_debug = false
-end
+-- local p_debug = vim.fn.getenv('DEBUG_PLENARY')
+-- if p_debug == vim.NIL then
+--   p_debug = false
+-- end
 
 -- User configuration section
 local default_config = {
