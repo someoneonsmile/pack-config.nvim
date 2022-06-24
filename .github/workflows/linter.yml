@@ -19,5 +19,5 @@ jobs:
         uses: github/super-linter/slim@v4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          VALIDATE_JSCPD: false
-          VALIDATE_PYTHON_BLACK: false
+          VALIDATE_LUA: true
+          LINTER_RULES_PATH: /
