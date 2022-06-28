@@ -2,9 +2,10 @@ local log = require('pack-config.log')
 
 local M = {}
 
-M.answer = function(question)
-  local answer = vim.fn.input(question)
-  return answer == 'y' or answer == 'yes'
+M.answer = function(question, answers)
+  answers = M.set:from_list(M.convert.to_table(answers or { 'y', 'yes' }))
+  local input = vim.fn.input(question)
+  return M.set.contains(answers, input)
 end
 
 -- ----------------------------------------------------------------------
