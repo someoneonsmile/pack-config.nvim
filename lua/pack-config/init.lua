@@ -74,6 +74,8 @@ end
 --  opts.loader_opts: control the loader init action
 --  opts.env: env to pack setup/config
 M.setup = fn.once(function(opts)
+  pcall(require, 'impatient')
+
   cfg = tbl.tbl_force_deep_extend(default_cfg, opts)
   cfg.scanner = require('pack-config.scanner').with_default(cfg.scanner, false)
   cfg.parser = require('pack-config.parser').with_default(cfg.parser, false)
