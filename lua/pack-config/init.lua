@@ -55,10 +55,14 @@ local load = function(scan_paths)
       log.error('load lua file failed, path = ' .. pack_path, pack)
     elseif not cfg.parser.is_pack(pack) then
       log.error('not a pack. path =', pack_path)
-    elseif Set.contains(block_set, pack.name) then
-      log.debug('block pack: ', pack.name)
     else
-      valid_packs[pack.name] = cfg.parser.parse(pack)
+      local parsed_pack = cfg.parser.parse(pack)
+      -- block_list filter
+      if Set.contains(block_set, parsed_pack.name) then
+        log.debug('block pack: ', parsed_pack.name)
+      else
+        valid_packs[parsed_pack.name] = parsed_pack
+      end
     end
   end
 
