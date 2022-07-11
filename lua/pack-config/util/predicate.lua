@@ -1,4 +1,6 @@
-local Set = require('pack-config.util').set
+local util = require('pack-config.util')
+local Set = util.set
+local tbl = util.tbl
 
 local M = {}
 
@@ -44,6 +46,7 @@ M.tbl_notempty = function(v)
 end
 
 M.is_type = function(types, v)
+  ---@diagnostic disable-next-line: redundant-parameter
   vim.validate {
     types = { types, { 'string', 'table' } },
   }
@@ -52,8 +55,23 @@ M.is_type = function(types, v)
     types = { types }
   end
 
+  local extra_types = {
+    list = function(v_extra)
+      return type(v_extra) == 'table' and vim.tbl_islist(v_extra)
+    end,
+    map = function(v_extra)
+      return type(v_extra) == 'table' and not vim.tbl_islist(v_extra)
+    end,
+  }
+
   local type_set = Set.from_list(Set, types)
   return Set.contains(type_set, type(v))
+    or tbl.tbl_reduce(types, false, function(r, t)
+      if r then
+        return r
+      end
+      return extra_types[t] ~= nil and extra_types[t](v)
+    end)
 end
 
 return M
