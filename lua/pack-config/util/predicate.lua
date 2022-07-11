@@ -1,3 +1,5 @@
+local Set = require('pack-config.util').set
+
 local M = {}
 
 M.not_nil = function(it)
@@ -39,6 +41,19 @@ end
 
 M.tbl_notempty = function(v)
   return not M.tbl_isempty(v)
+end
+
+M.is_type = function(types, v)
+  vim.validate {
+    types = { types, { 'string', 'table' } },
+  }
+
+  if type(types) == 'string' then
+    types = { types }
+  end
+
+  local type_set = Set.from_list(Set, types)
+  return Set.contains(type_set, type(v))
 end
 
 return M

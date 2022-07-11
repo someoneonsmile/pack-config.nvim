@@ -59,10 +59,21 @@ describe('util test', function()
   it('fn once', function()
     local a = 0
     local once_fn = util.fn.once(function()
-      a = 1
+      a = a + 1
     end)
     once_fn()
+    once_fn()
     assert.same(1, a)
-    assert.same(1, a)
+  end)
+
+  -- test predicate.is_type
+  it('is_type', function()
+    local v = { 'v' }
+    assert.is_true(util.predicate.is_type('table', v))
+    assert.is_true(util.predicate.is_type({ 'table' }, v))
+    assert.is_true(util.predicate.is_type({ 'table', 'string' }, v))
+    assert.has_error(function()
+      util.predicate.is_type(nil, v)
+    end)
   end)
 end)
