@@ -49,9 +49,6 @@ local M = {}
 -- must
 M.name = '[pack_name]'
 
--- must
-M.is_pack = true
-
 -- optional
 -- string, table or function
 M.resources = function()
@@ -78,6 +75,7 @@ end
 -- string, table or function
 M.after = { '[other_pack_name]' }
 
+-- optional
 -- pack setup config
 M.setup = function()
   -- use pack fn to load other pack
@@ -85,6 +83,7 @@ M.setup = function()
   ...
 end
 
+-- optional
 -- pack config after all pack setup
 M.config = function()
   -- use pack fn to load other pack

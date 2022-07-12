@@ -1,8 +1,9 @@
-local convert = require('pack-config.util').convert
+local util = require('pack-config.util')
+local convert = util.convert
+local pred = util.predicate
 
 local function can_to_table(v)
-  local t = type(v)
-  return t == 'function' or t == 'string' or t == 'table' or t == 'nil'
+  return pred.is_type({ 'function', 'string', 'table', 'nil' }, v)
 end
 
 local M = {}
@@ -12,12 +13,11 @@ M.name = 'lua'
 M.exists = true
 
 M.is_pack = function(pack)
-  return pack['is_pack']
-    and type(pack['name']) == 'string'
-    and can_to_table(pack['resources'])
-    and can_to_table(pack['after'])
-    and type(pack['setup']) == 'function'
-    and type(pack['config']) == 'function'
+  return type(pack['name']) == 'string'
+      and can_to_table(pack['resources'])
+      and can_to_table(pack['after'])
+      and pred.is_type({ 'function', 'nil' }, pack['setup'])
+      and pred.is_type({ 'function', 'nil' }, pack['config'])
 end
 
 M.parse = function(pack)
