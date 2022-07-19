@@ -68,6 +68,10 @@ M.resources = function()
         {'[other_resource_url]', rely = {}}
       },
     },
+    -- optional, place deprecated resources
+    deprecated = {
+      { '[deprecated_resource]', replace_with = '[new_resource]'}
+    }
   }
 end
 
