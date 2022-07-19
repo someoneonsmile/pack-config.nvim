@@ -78,4 +78,15 @@ describe('util test', function()
       util.predicate.is_type(nil, v)
     end)
   end)
+
+  it('to_table_n', function()
+    local t = function()
+      return {
+        { 'a' },
+        { 'b' },
+        'c',
+      }
+    end
+    assert.same({ { 'a' }, { 'b' }, { 'c' } }, util.convert.to_table_n(t, 2))
+  end)
 end)
