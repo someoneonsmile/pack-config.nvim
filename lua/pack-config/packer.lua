@@ -54,7 +54,7 @@ M.regist = function(packs)
     local pack_resources = pack.resources
     tbl.list_extend(relys, parse_rely(pack_resources))
     tbl.list_extend(resources, pack_resources)
-    tbl.tbl_force_extend(deprecateds, tbl.list_to_map(pack_resources.deprecated, fn.first, fn.orign))
+    deprecateds = tbl.tbl_force_extend(deprecateds, tbl.list_to_map(pack_resources.deprecated, fn.first, fn.orign))
     pack.setup = fn.once(with_env(pack.setup))
     pack.config = fn.once(with_env(pack.config))
 
@@ -79,7 +79,7 @@ local deprecated_tip = function(items)
     local path = fn.first(v)
     local deprecated_config = deprecateds[path]
     if deprecated_config then
-      tbl.list_extend(
+      table.insert(
         tips,
         string.format('%s is deprecated, replace with %s', deprecated_config[1], deprecated_config.replace_with)
       )

@@ -33,6 +33,8 @@ describe('util test', function()
     local tbl_force_extend = util.tbl.tbl_force_extend
     eq({ '1' }, tbl_force_extend(nil, { 1 }, { '1' }))
     eq({ '1', { '1', '2' } }, tbl_force_extend(nil, { 1, { 1, 2 } }, { '1', { '1', '2' } }))
+    eq({ a = { 'b' } }, tbl_force_extend(nil, { a = { 'a' } }, { a = { 'b' } }))
+    eq({ a = { 'a' }, b = { 'b' } }, tbl_force_extend(nil, { a = { 'a' } }, { b = { 'b' } }))
   end)
 
   -- test tbl_extend
