@@ -23,7 +23,7 @@ end
 M.parse = function(pack)
   local result = {}
   result.name = pack.name
-  result.resources = convert.to_table(pack.resources)
+  result.resources = convert.to_table_n(pack.resources, 2)
   result.after = convert.to_table(pack.after)
   result.setup = pack.setup
   result.config = pack.config
