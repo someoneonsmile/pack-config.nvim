@@ -44,7 +44,7 @@ require('pack-config').setup {
 
 ## Default Pack File Format
 
-<details>
+<details open>
 
 <summary> detail </summary>
 
