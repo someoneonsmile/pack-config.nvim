@@ -186,7 +186,7 @@ end
 
 ## TODO
 
-- [ ] lua check and style
+- [x] lua check and style
 - [x] pack loader add init function
 - [x] deprecate tip
 - [x] context muti instance
