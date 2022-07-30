@@ -104,7 +104,15 @@ return M
 
 `vim.fn.stdpath('data') .. '/site/pack/packer/start'`: pack loader download location
 
+## Profile
+
+`:lua require('pack-config.profile').report()`
+
 ## Custom scanner, parser and loader
+
+<details>
+
+<summary> detail </summary>
 
 ### Scanner
 
@@ -174,6 +182,8 @@ M.load = function(packs)
 end
 ```
 
+<details>
+
 ## TODO
 
 - [ ] lua check and style
@@ -188,5 +198,5 @@ end
 - [x] log use vim.notify
 - [x] setfenv with setup and config
 - [x] split parser
-- [ ] profile
+- [x] profile
 - [ ] parallel

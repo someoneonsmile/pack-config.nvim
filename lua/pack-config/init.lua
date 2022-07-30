@@ -1,6 +1,8 @@
 local packer = require('pack-config.packer')
 local util = require('pack-config.util')
 local log = require('pack-config.log')
+local Profile = require('pack-config.profile')
+
 local fn = util.fn
 local pd = util.predicate
 local tbl = util.tbl
@@ -78,6 +80,7 @@ end
 --  opts.loader_opts: control the loader init action
 --  opts.env: env to pack setup/config
 M.setup = fn.once(function(opts)
+  Profile.start('global', 'total')
   pcall(require, 'impatient')
 
   cfg = tbl.tbl_force_deep_extend(default_cfg, opts)
@@ -97,7 +100,10 @@ M.setup = fn.once(function(opts)
     loader = cfg.loader,
     env = cfg.env,
   }
+
   load(cfg.scan_paths)
+
+  Profile.stop('global', 'total')
 end)
 
 return M

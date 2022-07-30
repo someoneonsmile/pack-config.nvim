@@ -2,13 +2,14 @@ local util = require('pack-config.util')
 local log = require('pack-config.log')
 local Context = require('pack-config.context')
 local Const = require('pack-config.const')
+local Profile = require('pack-config.profile')
+
 local convert = util.convert
 local fn = util.fn
 local pd = util.predicate
 local tbl = util.tbl
 
 local loader
-
 local env
 
 local M = {}
@@ -95,6 +96,7 @@ end
 M.done = function()
   local all_resources = tbl.list_distinct(fn.first, tbl.list_extend({}, relys, resources))
   deprecated_tip(all_resources)
+
   log.debug('pack loader will load :', all_resources)
   loader.load(all_resources)
   if regist_packs:is_empty() then
@@ -111,13 +113,17 @@ M.done = function()
 
   -- call setup() and config()
   for _, pack in ipairs(regist_packs_sorted) do
+    Profile.start('setup-config', pack.name .. '::setup')
     local ok, msg = pcall(pack.setup)
+    Profile.stop('setup-config', pack.name .. '::setup')
     if not ok then
       log.error(pack.name .. '::setup', msg)
     end
   end
   for _, pack in ipairs(regist_packs_sorted) do
+    Profile.start('setup-config', pack.name .. '::config')
     local ok, msg = pcall(pack.config)
+    Profile.stop('setup-config', pack.name .. '::config')
     if not ok then
       log.error(pack.name .. '::config', msg)
     end
