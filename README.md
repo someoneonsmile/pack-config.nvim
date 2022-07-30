@@ -78,7 +78,7 @@ M.resources = function()
       },
     },
     -- optional, placing deprecated resources
-    -- when use by other pack, will log the deprecated tip
+    -- when 'deprecated_resource' use by other pack, will log the deprecated and replace_with tip
     deprecated = {
       { '[deprecated_resource]', replace_with = '[new_resource]'}
     }
