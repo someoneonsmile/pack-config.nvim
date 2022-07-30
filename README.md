@@ -182,7 +182,7 @@ M.load = function(packs)
 end
 ```
 
-<details>
+</details>
 
 ## TODO
 
