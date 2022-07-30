@@ -1,6 +1,6 @@
 # pack-config.nvim
 
-Modular package, Unified package installation and configuration in same file, decoupling package manager
+Modular package, package's installation and configuration in same file, decoupling package manager
 
 ## Setup
 
@@ -27,16 +27,18 @@ require('pack-config').setup {
 
   -- optional, env for setup and config fn
   env = {
-    -- for get other pack
-    pack = function(name)
+    -- default, for get other pack
+    pack = function(pack_name)
       ...
     end
   },
 
   -- optional, provide convenience for debug, bisect
   block_list = {
-      '[pack_name]'
-    },
+    '[pack_name_a]',
+    '[pack_name_b]',
+    -- '[pack_name_c]',
+  },
 }
 ```
 
@@ -54,7 +56,7 @@ local M = {}
 M.name = '[pack_name]'
 
 -- optional
--- string, table or function
+-- format: string, table or function
 M.resources = function()
   return {
     -- resource
@@ -72,7 +74,8 @@ M.resources = function()
         {'[other_resource_url]', rely = {}}
       },
     },
-    -- optional, place deprecated resources
+    -- optional, placing deprecated resources
+    -- when use by other pack, will log the deprecated tip
     deprecated = {
       { '[deprecated_resource]', replace_with = '[new_resource]'}
     }
@@ -80,19 +83,19 @@ M.resources = function()
 end
 
 -- optional
--- string, table or function
+-- format: string, table or function
 M.after = { '[other_pack_name]' }
 
 -- optional
--- pack setup config
+-- pack setup
 M.setup = function()
-  -- use pack fn to load other pack
+  -- use pack the env fn to load other pack
   local other_pack = pack('other_pack_name')
   ...
 end
 
 -- optional
--- pack config after all pack setup
+-- config run after all pack's setup
 M.config = function()
   -- use pack fn to load other pack
   local other_pack = pack('other_pack_name')
@@ -101,6 +104,105 @@ end
 
 return M
 ```
+
+### `resources` variants
+
+<details>
+
+<summary> variants </summary>
+
+- string
+
+```lua
+M.resources = 'resource_url'
+```
+
+- table
+
+```lua
+M.resources = { 'resource_url_a',  'resource_url_b'}
+```
+
+- full table
+
+```lua
+M.resources = {
+  {
+    '[resource_url_a]',
+    as = '',
+    branch = '',
+    tag = '',
+    commit = '',
+    pin = '',
+    opt = true,
+    run = function() end,
+    rely = {
+      -- nested resource
+      {'[other_resource_url]', rely = {}}
+    },
+  },
+  {
+    '[resource_url_b]',
+    as = '',
+    branch = '',
+    tag = '',
+    commit = '',
+    pin = '',
+    opt = true,
+    run = function() end,
+    rely = {
+      -- nested resource
+      {'[other_resource_url]', rely = {}}
+    },
+  },
+  -- optional, placing deprecated resources
+  -- when use by other pack, will log the deprecated tip
+  deprecated = {
+    { '[deprecated_resource_a]', replace_with = '[new_resource_a]'}
+    { '[deprecated_resource_b]', replace_with = '[new_resource_b]'}
+  }
+}
+
+```
+
+- function
+
+```lua
+M.resources = function()
+  return 'all_kind_above'
+end
+```
+
+</details>
+
+### `after` variants
+
+<details>
+
+<summary> variants </summary>
+
+- string
+
+```lua
+M.after = 'other_pack_name'
+```
+
+- table
+
+```lua
+M.after = { 'other_pack_name_a', 'other_pack_name_b' }
+```
+
+- function
+
+```lua
+M.after = function()
+  return 'all_kind_above'
+end
+
+```
+
+</details>
 
 </details>
 
