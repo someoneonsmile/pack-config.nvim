@@ -42,6 +42,10 @@ require('pack-config').setup {
 
 ## Default pack File Format
 
+<details>
+
+<summary> detail </summary>
+
 ```lua
 -- pack config
 local M = {}
@@ -97,6 +101,8 @@ end
 
 return M
 ```
+
+</details>
 
 ## Download Package Location
 
