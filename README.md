@@ -7,6 +7,9 @@ Modular package, Unified package installation and configuration in same file, de
 ```lua
 
 require('pack-config').setup {
+  -- must
+  scan_paths = { '/path/subpath/pre', '/path/subpath' },
+
   -- optional
   -- default to select from the order list [packer.nvim, paq-nvim] if exists
   loader = require('pack-config.loader.packer'),
@@ -21,9 +24,6 @@ require('pack-config').setup {
   parser = require('pack-config.parser.lua'),
   -- optional
   parser_opts = {},
-
-  -- must
-  scan_paths = { '/path/subpath/pre', '/path/subpath' },
 
   -- optional, env for setup and config fn
   env = {
