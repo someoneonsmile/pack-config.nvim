@@ -42,7 +42,7 @@ require('pack-config').setup {
 }
 ```
 
-## Default pack File Format
+## Default Pack File Format
 
 <details>
 
