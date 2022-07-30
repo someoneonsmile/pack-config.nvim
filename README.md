@@ -66,8 +66,11 @@ M.resources = function()
       branch = '',
       tag = '',
       commit = '',
-      pin = '',
+      -- lock, skip updating this plugin
+      pin = false,
+      -- manually marks a plugin as optional
       opt = true,
+      -- update / install hook
       run = function() end,
       rely = {
         -- nested resource
@@ -133,7 +136,7 @@ M.resources = {
     branch = '',
     tag = '',
     commit = '',
-    pin = '',
+    pin = false,
     opt = true,
     run = function() end,
     rely = {
@@ -147,7 +150,7 @@ M.resources = {
     branch = '',
     tag = '',
     commit = '',
-    pin = '',
+    pin = false,
     opt = true,
     run = function() end,
     rely = {
@@ -226,7 +229,9 @@ end
 
 to get the pack file
 
-#### Format
+<details>
+
+<summary> Format </summary>
 
 ```lua
 local M = {}
@@ -242,11 +247,15 @@ M.scan = function(paths)
 end
 ```
 
+</details>
+
 ### Parser
 
 to parse the pack file
 
-#### Format
+<details>
+
+<summary> Format </summary>
 
 ```lua
 local M = {}
@@ -270,11 +279,15 @@ return {
 end
 ```
 
+</details>
+
 ### Loader
 
 use package manager to load the pack
 
-#### Format
+<details>
+
+<summary> Format </summary>
 
 ```lua
 local M = {}
@@ -289,6 +302,8 @@ M.load = function(packs)
 
 end
 ```
+
+</details>
 
 </details>
 
