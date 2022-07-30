@@ -59,12 +59,13 @@ end, { notify = vim.log.levels.INFO })
 --     '',
 --     as = '',
 --     branch = '',
---     rtp = '',
+--     commit = '',
 --     tag = '',
 --     pin = '',
 --     ft = {},
 --     opt = true,
 --     run = function() end,
+--     rtp = '',
 --   },
 local transform = function(pack)
   return {
@@ -72,6 +73,7 @@ local transform = function(pack)
     as = pack.as,
     branch = pack.branch,
     tag = pack.tag,
+    commit = pack.commit,
     lock = pack.pin,
     ft = pack.ft,
     opt = pack.opt,

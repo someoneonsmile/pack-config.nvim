@@ -14,10 +14,10 @@ M.exists = true
 
 M.is_pack = function(pack)
   return type(pack['name']) == 'string'
-      and can_to_table(pack['resources'])
-      and can_to_table(pack['after'])
-      and pred.is_type({ 'function', 'nil' }, pack['setup'])
-      and pred.is_type({ 'function', 'nil' }, pack['config'])
+    and can_to_table(pack['resources'])
+    and can_to_table(pack['after'])
+    and pred.is_type({ 'function', 'nil' }, pack['setup'])
+    and pred.is_type({ 'function', 'nil' }, pack['config'])
 end
 
 M.parse = function(pack)
