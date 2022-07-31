@@ -3,21 +3,17 @@ describe('util test', function()
   local neq = assert.are_not.same
   local util = require('pack-config.util')
 
-  -- test with_default
-  it('fn with_default', function()
-    local with_default = util.fn.with_default {}
-    eq({ {}, { 1 }, { 1, 2 } }, { with_default(nil, { 1 }, { 1, 2 }) })
-  end)
+  -- ----------------------------------------------------------------------
+  --    - util.tbl -
+  -- ----------------------------------------------------------------------
 
-  -- test tbl_extend
-  it('tbl keep extend', function()
+  it('tbl tbl_keep_extend', function()
     local tbl_keep_extend = util.tbl.tbl_keep_extend
     eq({ 1 }, tbl_keep_extend(nil, { 1 }, { '1' }))
     eq({ 1, { 1, 2 } }, tbl_keep_extend(nil, { 1, { 1, 2 } }, { '1', { '1', '2' } }))
   end)
 
-  -- test tbl_extend
-  it('tbl deep keep extend', function()
+  it('tbl tbl_keep_deep_extend', function()
     local tbl_keep_deep_extend = util.tbl.tbl_keep_deep_extend
     eq({ 1 }, tbl_keep_deep_extend(nil, { 1 }, { '1' }))
     eq({ 1, { 1, 2 } }, tbl_keep_deep_extend(nil, { 1, { 1, 2 } }, { '1', { '1', '2' } }))
@@ -28,8 +24,7 @@ describe('util test', function()
     neq({ 1, { 1, 2, '3' } }, tbl_keep_deep_extend(nil, { 1, { 1, 2 } }, { '1', { '1', '2', '3' } }))
   end)
 
-  -- test tbl_extend
-  it('tbl force extend', function()
+  it('tbl tbl_force_extend', function()
     local tbl_force_extend = util.tbl.tbl_force_extend
     eq({ '1' }, tbl_force_extend(nil, { 1 }, { '1' }))
     eq({ '1', { '1', '2' } }, tbl_force_extend(nil, { 1, { 1, 2 } }, { '1', { '1', '2' } }))
@@ -37,8 +32,7 @@ describe('util test', function()
     eq({ a = { 'a' }, b = { 'b' } }, tbl_force_extend(nil, { a = { 'a' } }, { b = { 'b' } }))
   end)
 
-  -- test tbl_extend
-  it('tbl deep force extend', function()
+  it('tbl tbl_force_deep_extend', function()
     local tbl_force_deep_extend = util.tbl.tbl_force_deep_extend
     eq({ '1' }, tbl_force_deep_extend(nil, { 1 }, { '1' }))
     eq({ '1', { '1', '2' } }, tbl_force_deep_extend(nil, { 1, { 1, 2 } }, { '1', { '1', '2' } }))
@@ -50,26 +44,21 @@ describe('util test', function()
     assert.are_not.same({ '1', { '1', '2', 3 } }, tbl_force_deep_extend(nil, { 1, { 1, 2, 3 } }, { '1', { '1', '2' } }))
   end)
 
-  -- test auto id gen
+  -- ----------------------------------------------------------------------
+  --    - util.id -
+  -- ----------------------------------------------------------------------
+
   it('auto gen id', function()
     local auto_id = util.id:new('test')
     assert.same(1, auto_id:inc())
     assert.same(2, auto_id:inc())
   end)
 
-  -- test fn once
-  it('fn once', function()
-    local a = 0
-    local once_fn = util.fn.once(function()
-      a = a + 1
-    end)
-    once_fn()
-    once_fn()
-    assert.same(1, a)
-  end)
+  -- ----------------------------------------------------------------------
+  --    - util.predicate -
+  -- ----------------------------------------------------------------------
 
-  -- test predicate.is_type
-  it('is_type', function()
+  it('predicate is_type', function()
     local v = { 'v' }
     assert.is_true(util.predicate.is_type('table', v))
     assert.is_true(util.predicate.is_type({ 'table' }, v))
@@ -81,6 +70,10 @@ describe('util test', function()
     end)
   end)
 
+  -- ----------------------------------------------------------------------
+  --    - util.conver -
+  -- ----------------------------------------------------------------------
+
   it('to_table_n', function()
     local t = function()
       return {
@@ -90,5 +83,47 @@ describe('util test', function()
       }
     end
     assert.same({ { 'a' }, { 'b' }, { 'c' } }, util.convert.to_table_n(t, 2))
+  end)
+
+  -- ----------------------------------------------------------------------
+  --    - util.fn -
+  -- ----------------------------------------------------------------------
+
+  it('fn with_default', function()
+    local with_default = util.fn.with_default {}
+    eq({ {}, { 1 }, { 1, 2 } }, { with_default(nil, { 1 }, { 1, 2 }) })
+  end)
+
+  it('fn once', function()
+    local a = 0
+    local once_fn = util.fn.once(function()
+      a = a + 1
+    end)
+    once_fn()
+    once_fn()
+    assert.same(1, a)
+  end)
+
+  it('fn curry', function()
+    local curry = util.fn.curry
+    local f = curry(function(a, b, c)
+      return a + b + c
+    end)
+    assert.same(f(1)(2)(3)(), 6)
+    assert.same(f(1, 2)(3)(), 6)
+    assert.same(f(1)(2, 3)(), 6)
+    assert.same(f(1, 2, 3)(), 6)
+  end)
+
+  it('fn pipe', function()
+    local pipe = util.fn.pipe
+    local f = pipe(function(a)
+      return a + 1
+    end, function(b)
+      return b + 2
+    end, function(c)
+      return c + 3
+    end)
+    assert.same(f(0), 6)
   end)
 end)

@@ -4,6 +4,8 @@ local Id = require('pack-config.util').id
 
 local M = {}
 
+M.unpack = unpack
+
 -- ----------------------------------------------------------------------
 --    - once (avoid run more than once) -
 -- ----------------------------------------------------------------------
@@ -58,7 +60,7 @@ M.with_default = function(default_value)
     for i = 1, l do
       table.insert(r, select(i, ...) or default_value)
     end
-    return unpack(r)
+    return M.unpack(r)
   end
 end
 
@@ -85,7 +87,19 @@ M.reduce = function(fn, acc, ...)
     return acc
   end
   local result = acc
-  for _, v in pairs { ... } do
+  for _, v in ipairs { ... } do
+    result = fn(result, v)
+  end
+  return result
+end
+
+-- similar to reduce, use the first as init
+M.fold = function(fn, ...)
+  if select('#', ...) == 0 then
+    return
+  end
+  local result = M.first { ... }
+  for _, v in ipairs { select(2, ...) } do
     result = fn(result, v)
   end
   return result
@@ -95,11 +109,11 @@ M.pipe = function(...)
   if select('#', ...) == 0 then
     error('pipe requires at least one function')
   end
-  return M.reduce(function(pre, current)
+  return M.fold(function(pre, current)
     return function(...)
-      current(pre(...))
+      return current(pre(...))
     end
-  end, M.first(), select(2, ...))
+  end, ...)
 end
 
 M.compose = function(...)
@@ -115,7 +129,7 @@ end
 
 M.filter = M.curry(function(fn, ...)
   local result = {}
-  for _, v in pairs { ... } do
+  for _, v in ipairs { ... } do
     if fn(v) then
       table.insert(result, v)
     end
@@ -125,7 +139,7 @@ end)
 
 M.reject = M.curry(function(fn, ...)
   local result = {}
-  for _, v in pairs { ... } do
+  for _, v in ipairs { ... } do
     if not fn(v) then
       table.insert(result, v)
     end
@@ -135,7 +149,7 @@ end)
 
 M.reverse = function(...)
   local result = {}
-  local n = #{ ... }
+  local n = select('#', ...)
   for i, v in ipairs { ... } do
     result[n + 1 - i] = v
   end
@@ -181,7 +195,7 @@ M.dot_chain = function(tbl, ...)
     error('args contains not string type')
   end
   local v = tbl
-  for _, v_k in pairs { ... } do
+  for _, v_k in ipairs { ... } do
     if v == nil then
       return nil
     end
@@ -198,6 +212,21 @@ M.with_env = function(env)
   env = setmetatable(env, { __index = _G })
   return function(fn)
     return setfenv(fn, env)
+  end
+end
+
+-- ----------------------------------------------------------------------
+--    - with_defer -
+-- ----------------------------------------------------------------------
+
+M.with_defer = function(timeout)
+  return function(fn)
+    return function(...)
+      local args = { ... }
+      vim.defer_fn(function()
+        fn(M.unpack(args))
+      end, timeout)
+    end
   end
 end
 
