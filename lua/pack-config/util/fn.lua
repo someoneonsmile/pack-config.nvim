@@ -239,7 +239,7 @@ M.with_error_handler = function(error_handler)
     return function(...)
       local ok, result = pcall(fn, ...)
       if not ok then
-        error_handler(result)
+        return error_handler(result)
       end
       return result
     end
