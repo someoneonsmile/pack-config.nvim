@@ -51,4 +51,14 @@ M.report = function()
   print(pt)
 end
 
+M.with_profile = function(group_key, item_key)
+  return function(fn)
+    return function(...)
+      M.start(group_key, item_key)
+      fn(...)
+      M.stop(group_key, item_key)
+    end
+  end
+end
+
 return M

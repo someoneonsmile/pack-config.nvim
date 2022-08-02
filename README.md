@@ -322,4 +322,5 @@ end
 - [x] setfenv with setup and config
 - [x] split parser
 - [x] profile
+- [x] error handler
 - [ ] parallel
