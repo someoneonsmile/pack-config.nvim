@@ -126,4 +126,16 @@ describe('util test', function()
     end)
     assert.same(f(0), 6)
   end)
+
+  it('fn with_error_handler', function()
+    local with_error_handler = util.fn.with_error_handler(function(_)
+      return 'error'
+    end)
+    assert.same(
+      with_error_handler(function()
+        not_exist_fn()
+      end)(),
+      'error'
+    )
+  end)
 end)
