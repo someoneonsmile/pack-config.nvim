@@ -56,8 +56,14 @@ M.regist = function(packs)
     tbl.list_extend(relys, parse_rely(pack_resources))
     tbl.list_extend(resources, pack_resources)
     deprecateds = tbl.tbl_force_extend(deprecateds, tbl.list_to_map(pack_resources.deprecated, fn.first, fn.orign))
-    pack.setup = fn.once(with_env(pack.setup))
-    pack.config = fn.once(with_env(pack.config))
+    pack.setup =
+    fn.once(Profile.with_profile('setup-config', pack.name .. '::setup')(fn.with_error_handler(function(msg)
+      log.error(pack.name .. '::setup', msg)
+    end)(with_env(pack.setup))))
+    pack.config =
+    fn.once(Profile.with_profile('setup-config', pack.name .. '::config')(fn.with_error_handler(function(msg)
+      log.error(pack.name .. '::config', msg)
+    end)(with_env(pack.config))))
 
     if regist_packs:get(pack.name) ~= nil then
       error(pack.name .. ' already exists', vim.log.levels.ERROR)
@@ -107,26 +113,28 @@ M.done = function()
   local sorter = util.topo_sort:new(function(_, v)
     return v.name
   end, function(v)
-    return fn.with_default {}(v.after)
+    return fn.with_default {} (v.after)
   end)
   local regist_packs_sorted = sorter:sort(regist_packs)
 
   -- call setup() and config()
   for _, pack in ipairs(regist_packs_sorted) do
-    Profile.start('setup-config', pack.name .. '::setup')
-    local ok, msg = pcall(pack.setup)
-    Profile.stop('setup-config', pack.name .. '::setup')
-    if not ok then
-      log.error(pack.name .. '::setup', msg)
-    end
+    pack.setup()
+    -- Profile.start('setup-config', pack.name .. '::setup')
+    -- local ok, msg = pcall(pack.setup)
+    -- Profile.stop('setup-config', pack.name .. '::setup')
+    -- if not ok then
+    --   log.error(pack.name .. '::setup', msg)
+    -- end
   end
   for _, pack in ipairs(regist_packs_sorted) do
-    Profile.start('setup-config', pack.name .. '::config')
-    local ok, msg = pcall(pack.config)
-    Profile.stop('setup-config', pack.name .. '::config')
-    if not ok then
-      log.error(pack.name .. '::config', msg)
-    end
+    pack.config()
+    -- Profile.start('setup-config', pack.name .. '::config')
+    -- local ok, msg = pcall(pack.config)
+    -- Profile.stop('setup-config', pack.name .. '::config')
+    -- if not ok then
+    --   log.error(pack.name .. '::config', msg)
+    -- end
   end
 end
 

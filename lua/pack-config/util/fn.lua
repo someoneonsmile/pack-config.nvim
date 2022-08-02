@@ -230,4 +230,20 @@ M.with_defer = function(timeout)
   end
 end
 
+-- ----------------------------------------------------------------------
+--    - with_error_handler -
+-- ----------------------------------------------------------------------
+
+M.with_error_handler = function(error_handler)
+  return function(fn)
+    return function(...)
+      local ok, result = pcall(fn, ...)
+      if not ok then
+        error_handler(result)
+      end
+      return result
+    end
+  end
+end
+
 return M
