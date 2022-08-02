@@ -78,15 +78,6 @@ M.regist = function(packs)
     pack.setup = setup_pipe
     pack.config = config_pipe
 
-    -- pack.setup =
-    -- fn.once(Profile.with_profile('setup-config', pack.name .. '::setup')(fn.with_error_handler(function(msg)
-    --   log.error(pack.name .. '::setup', msg)
-    -- end)(with_env(pack.setup))))
-    -- pack.config =
-    -- fn.once(Profile.with_profile('setup-config', pack.name .. '::config')(fn.with_error_handler(function(msg)
-    --   log.error(pack.name .. '::config', msg)
-    -- end)(with_env(pack.config))))
-
     if regist_packs:get(pack.name) ~= nil then
       error(pack.name .. ' already exists', vim.log.levels.ERROR)
     end
@@ -142,21 +133,9 @@ M.done = function()
   -- call setup() and config()
   for _, pack in ipairs(regist_packs_sorted) do
     pack.setup()
-    -- Profile.start('setup-config', pack.name .. '::setup')
-    -- local ok, msg = pcall(pack.setup)
-    -- Profile.stop('setup-config', pack.name .. '::setup')
-    -- if not ok then
-    --   log.error(pack.name .. '::setup', msg)
-    -- end
   end
   for _, pack in ipairs(regist_packs_sorted) do
     pack.config()
-    -- Profile.start('setup-config', pack.name .. '::config')
-    -- local ok, msg = pcall(pack.config)
-    -- Profile.stop('setup-config', pack.name .. '::config')
-    -- if not ok then
-    --   log.error(pack.name .. '::config', msg)
-    -- end
   end
 end
 
