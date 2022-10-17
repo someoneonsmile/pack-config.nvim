@@ -8,7 +8,7 @@ Modular package, package's installation and configuration in same file, decoupli
 
 require('pack-config').setup {
   -- must
-  scan_paths = { '/path/subpath/pre', '/path/subpath' },
+  scan_paths = { '/path/pre', '/path/subpath', '/path/after' },
 
   -- optional
   -- default to select from the order list [packer.nvim, paq-nvim] if exists
