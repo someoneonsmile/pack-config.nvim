@@ -13,7 +13,8 @@ M.name = 'lua'
 M.exists = true
 
 M.is_pack = function(pack)
-  return type(pack['name']) == 'string'
+  return pack ~= nil
+    and type(pack['name']) == 'string'
     and can_to_table(pack['resources'])
     and can_to_table(pack['after'])
     and pred.is_type({ 'function', 'nil' }, pack['setup'])
