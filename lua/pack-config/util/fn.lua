@@ -42,10 +42,16 @@ M.orign = function(v)
 end
 
 M.first = function(tbl)
+  if type(tbl) ~= 'table' then
+    return
+  end
   return tbl[1]
 end
 
 M.last = function(tbl)
+  if type(tbl) ~= 'table' then
+    return
+  end
   return tbl[#tbl]
 end
 

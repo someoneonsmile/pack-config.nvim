@@ -92,16 +92,20 @@ end
 
 M.from_list = function(self, list)
   local s = {}
-  for _, v in ipairs(list) do
-    s[v] = true
+  if type(list) == 'table' then
+    for _, v in ipairs(list) do
+      s[v] = true
+    end
   end
   return setmetatable(s, self)
 end
 
 M.from_map = function(self, map)
   local s = {}
-  for k, _ in pairs(map) do
-    s[k] = true
+  if type(map) == 'table' then
+    for k, _ in pairs(map) do
+      s[k] = true
+    end
   end
   return setmetatable(s, self)
 end
