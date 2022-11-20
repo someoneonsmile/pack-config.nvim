@@ -1,8 +1,8 @@
-describe('util test', function()
-  local eq = assert.same
-  local neq = assert.are_not.same
-  local util = require('pack-config.util')
+local util = require('pack-config.util')
+local eq = assert.same
+local neq = assert.are_not.same
 
+describe('util test', function()
   -- ----------------------------------------------------------------------
   --    - util.tbl -
   -- ----------------------------------------------------------------------
