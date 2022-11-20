@@ -50,18 +50,18 @@ M.init = fn.once(function(opts)
   }
 end)
 
--- @param pack
---   {
---     '',
---     as = '',
---     branch = '',
---     tag = '',
---     pin = '',
---     ft = {},
---     opt = true,
---     rtp = '',
---     run = function() end,
---   },
+--- @param pack
+---   {
+---     '',
+---     as = '',
+---     branch = '',
+---     tag = '',
+---     pin = '',
+---     ft = {},
+---     opt = true,
+---     rtp = '',
+---     run = function() end,
+---   },
 local transform = function(pack)
   return {
     pack[1],
@@ -73,7 +73,7 @@ local transform = function(pack)
   }
 end
 
--- 不支持的 opts 提示
+--- 不支持的 opts 提示
 local not_support_opts_tip = function(packs)
   local not_support_opts = {
     ft = true,
@@ -90,8 +90,8 @@ local not_support_opts_tip = function(packs)
   end
 end
 
--- @param packs table
---  pack = {'', as = '', ft = {}, opt = true, run = function() end}
+--- @param packs table
+---  pack = {'', as = '', ft = {}, opt = true, run = function() end}
 M.load = function(packs)
   local ok, paq = pcall(require, 'paq')
   if not ok then

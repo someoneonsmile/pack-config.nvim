@@ -54,19 +54,19 @@ M.init = fn.once(function(opts)
   packer.init(cfg.outer_config)
 end, { notify = vim.log.levels.INFO })
 
--- @param pack
---   {
---     '',
---     as = '',
---     branch = '',
---     commit = '',
---     tag = '',
---     pin = '',
---     ft = {},
---     opt = true,
---     run = function() end,
---     rtp = '',
---   },
+--- @param pack table
+---   {
+---     '',
+---     as = '',
+---     branch = '',
+---     commit = '',
+---     tag = '',
+---     pin = '',
+---     ft = {},
+---     opt = true,
+---     run = function() end,
+---     rtp = '',
+---   },
 local transform = function(pack)
   return {
     pack[1],
@@ -82,7 +82,7 @@ local transform = function(pack)
   }
 end
 
--- 不支持的 opts 提示
+--- 不支持的 opts 提示
 local not_support_opts_tip = function(packs)
   local not_support_opts = {}
   local tips = {}
@@ -96,8 +96,8 @@ local not_support_opts_tip = function(packs)
   end
 end
 
--- @param packs table
---  pack = {'', as = '', ft = {}, opt = true, run = function() end}
+--- @param packs table
+---  pack = {'', as = '', ft = {}, opt = true, run = function() end}
 M.load = function(packs)
   local ok, packer = pcall(require, 'packer')
   if not ok then
