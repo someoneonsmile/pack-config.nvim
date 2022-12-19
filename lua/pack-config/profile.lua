@@ -46,6 +46,7 @@ M.report = function()
     table.insert(group_rows, { type = 'separator' })
     tbl.list_extend(rows, group_rows)
   end
+  rows[#rows] = nil
 
   local pt = Pt.new({ 'index', 'group', 'item', 'time' }, rows)
   print(pt)
