@@ -11,7 +11,7 @@ require('pack-config').setup {
   scan_paths = { '/path/pre', '/path/subpath', '/path/after' },
 
   -- optional
-  -- default to select from the order list [packer.nvim, paq-nvim] if exists
+  -- default to select from the order list [lazy.nvim, packer.nvim, paq-nvim] if exists
   loader = require('pack-config.loader.packer'),
   -- optional
   loader_opts = {},
