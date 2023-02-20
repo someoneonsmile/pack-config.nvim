@@ -1,6 +1,7 @@
 local convert = require('pack-config.util').convert
 local builtin_loaders = function()
   return {
+    require('pack-config.loader.lazy'),
     require('pack-config.loader.packer'),
     require('pack-config.loader.paq'),
   }
