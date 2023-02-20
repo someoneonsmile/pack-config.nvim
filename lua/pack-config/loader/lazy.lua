@@ -45,7 +45,7 @@ M.init = fn.once(function(opts)
   end
 
   -- some setup code
-  local ok, lazy = pcall(require, 'lazy')
+  local ok, _ = pcall(require, 'lazy')
   if not ok then
     error('not find lazy.nvim', vim.log.levels.ERROR)
   end
