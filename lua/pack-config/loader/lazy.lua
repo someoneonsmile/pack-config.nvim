@@ -108,7 +108,7 @@ M.load = function(packs)
 
   not_support_opts_tip(packs)
 
-  lazy.startup(
+  lazy.setup(
     tbl.tbl_map_filter(packs, function(pack)
       return transform(pack)
     end),
