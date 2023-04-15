@@ -5,7 +5,7 @@ local tbl = util.tbl
 
 local default_cfg = {
   auto_download = true,
-  pack_self = true,
+  pack_self = false,
   outer_config = {},
 }
 
