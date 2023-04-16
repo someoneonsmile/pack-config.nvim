@@ -3,6 +3,7 @@ local log = require('pack-config.log')
 local util = require('pack-config.util')
 local fn = util.fn
 local tbl = util.tbl
+local Set = util.set
 
 local default_cfg = {
   auto_download = true,
@@ -69,6 +70,7 @@ end, { notify = vim.log.levels.INFO })
 local transform = function(pack)
   return {
     pack[1],
+    dir = pack.dir,
     name = pack.as,
     branch = pack.branch,
     tag = pack.tag,
@@ -82,10 +84,20 @@ end
 
 --- 不支持的 opts 提示
 local not_support_opts_tip = function(packs)
-  local not_support_opts = {}
+  local support_opts = Set.from_list {
+    dir,
+    as,
+    branch,
+    tag,
+    commit,
+    pin,
+    ft,
+    opt,
+    run,
+  }
   local tips = {}
-  for k in pairs(packs) do
-    if not_support_opts[k] ~= nil then
+  for k, v in pairs(packs) do
+    if not Set.contains(support_opts - Set.from_map(v), k) then
       tips[k] = true
     end
   end
