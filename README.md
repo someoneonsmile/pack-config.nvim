@@ -137,7 +137,7 @@ M.resources = {
     tag = '',
     commit = '',
     pin = false,
-    opt = true,
+    opt = false,
     run = function() end,
     rely = {
       -- nested resource
