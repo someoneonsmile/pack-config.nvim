@@ -138,4 +138,13 @@ describe('util test', function()
       'error'
     )
   end)
+
+  -- ----------------------------------------------------------------------
+  --    - util.set -
+  -- ----------------------------------------------------------------------
+  it('set from_map', function()
+    local m_set = util.set.from_map { k1 = 'v1', k2 = 'v2' }
+    assert.same({ k1 = true, k2 = true }, m_set)
+    assert.is_true(util.set.contains(m_set, 'k1'))
+  end)
 end)

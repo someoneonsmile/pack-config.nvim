@@ -8,7 +8,7 @@ end
 
 -- 交集
 M.intersection = function(a, b)
-  local result = M:new()
+  local result = M.new()
   for key in pairs(a) do
     if b[key] then
       result[key] = true
@@ -19,7 +19,7 @@ end
 
 -- 并集
 M.union = function(a, b)
-  local result = M:new()
+  local result = M.new()
   for key in pairs(a) do
     result[key] = true
   end
@@ -31,7 +31,7 @@ end
 
 -- 补集
 M.complement = function(a, b)
-  local result = M:new()
+  local result = M.new()
   for key in pairs(a) do
     if b[key] == nil then
       result[key] = true
@@ -47,7 +47,7 @@ end
 
 -- 差集
 M.different = function(a, b)
-  local result = M:new()
+  local result = M.new()
   for key in pairs(a) do
     if b[key] == nil then
       result[key] = true
@@ -86,28 +86,28 @@ M.__shl = function(a, b)
   M.different(b, a)
 end
 
-M.new = function(self)
-  return setmetatable({}, self)
+M.new = function()
+  return setmetatable({}, M)
 end
 
-M.from_list = function(self, list)
+M.from_list = function(list)
   local s = {}
   if type(list) == 'table' then
     for _, v in ipairs(list) do
       s[v] = true
     end
   end
-  return setmetatable(s, self)
+  return setmetatable(s, M)
 end
 
-M.from_map = function(self, map)
+M.from_map = function(map)
   local s = {}
   if type(map) == 'table' then
     for k, _ in pairs(map) do
       s[k] = true
     end
   end
-  return setmetatable(s, self)
+  return setmetatable(s, M)
 end
 
 M.contains = function(self, item)

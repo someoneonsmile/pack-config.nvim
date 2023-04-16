@@ -85,15 +85,15 @@ end
 --- 不支持的 opts 提示
 local not_support_opts_tip = function(packs)
   local support_opts = Set.from_list {
-    dir,
-    as,
-    branch,
-    tag,
-    commit,
-    pin,
-    ft,
-    opt,
-    run,
+    'dir',
+    'as',
+    'branch',
+    'tag',
+    'commit',
+    'pin',
+    'ft',
+    'opt',
+    'run',
   }
   local tips = {}
   for k, v in pairs(packs) do

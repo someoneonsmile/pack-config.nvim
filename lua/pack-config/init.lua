@@ -44,7 +44,7 @@ local load = function(scan_paths)
     return
   end
 
-  local block_set = Set:from_list(cfg.block_list)
+  local block_set = Set.from_list(cfg.block_list)
 
   -- scan lua file
   local pack_paths = cfg.scanner.scan(scan_paths)

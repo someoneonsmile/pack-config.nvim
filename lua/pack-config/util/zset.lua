@@ -93,23 +93,23 @@ end
 
 M.__pairs = M.__ipairs
 
-M.new = function(self)
-  return setmetatable({ s = Set:new() }, self)
+M.new = function()
+  return setmetatable({ s = Set.new() }, M)
 end
 
-M.from_list = function(self, list)
-  local z = { s = Set:new() }
+M.from_list = function(list)
+  local z = M.new()
   for _, v in ipairs(list) do
-    if not z.s.contains(v) then
+    if not Set.contains(z.s, v) then
       table.insert(z, v)
       z.s = z.s + v
     end
   end
-  return setmetatable(z, self)
+  return z
 end
 
 M.contains = function(self, item)
-  return self.s.contains(item)
+  return Set.contains(self.s, item)
 end
 
 return M
