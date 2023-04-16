@@ -90,7 +90,7 @@ local not_support_opts_tip = function(packs)
     end
   end
   if not vim.tbl_isempty(tips) then
-    log.warn('packer not support opts', tips)
+    log.warn('lazy.nvim not support opts', tips)
   end
 end
 
