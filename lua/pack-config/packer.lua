@@ -14,7 +14,7 @@ local env
 
 local M = {}
 
-local regist_packs = Context:new(Const.pack_context_key)
+local regist_packs = Context:new(Const.key.pack_context)
 local relys = {}
 local resources = {}
 local deprecateds = {}

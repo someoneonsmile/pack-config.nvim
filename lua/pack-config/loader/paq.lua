@@ -1,5 +1,6 @@
 local log = require('pack-config.log')
 local util = require('pack-config.util')
+local Const = require('pack-config.const')
 local fn = util.fn
 local tbl = util.tbl
 
@@ -29,11 +30,13 @@ M.init = fn.once(function(opts)
   if not M.exist() then
     if cfg.auto_download then
       util.download_pack {
-        dist_dir = vim.fn.stdpath('data') .. '/site/pack/init/start/',
+        dist_dir = Const.path.init_pack,
         name = 'paq',
         path = 'savq/paq-nvim',
         prompt = 'Download paq-nvim? [y/N]',
       }
+
+      vim.opt.rtp:prepend(Const.path.init_pack .. 'pqa')
       -- vim.cmd([[qa]])
     else
       error('not find paq-nvim')

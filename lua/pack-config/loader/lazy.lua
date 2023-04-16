@@ -1,3 +1,4 @@
+local Const = require('pack-config.const')
 local log = require('pack-config.log')
 local util = require('pack-config.util')
 local fn = util.fn
@@ -30,7 +31,7 @@ M.init = fn.once(function(opts)
     if cfg.auto_download then
       assert(
         util.download_pack {
-          dist_dir = vim.fn.stdpath('data') .. '/site/pack/init/start/',
+          dist_dir = Const.path.init_pack,
           name = 'lazy',
           path = 'folke/lazy.nvim',
           prompt = 'Download lazy.nvim? [y/N]',
@@ -38,6 +39,7 @@ M.init = fn.once(function(opts)
         'Download lazy.nvim fail'
       )
 
+      vim.opt.rtp:prepend(Const.path.init_pack .. 'lazy')
       -- vim.cmd([[qa]])
     else
       error('not find lazy.nvim', vim.log.levels.ERROR)

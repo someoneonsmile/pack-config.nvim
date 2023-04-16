@@ -1,5 +1,6 @@
 local log = require('pack-config.log')
 local util = require('pack-config.util')
+local Const = require('pack-config.const')
 local fn = util.fn
 local tbl = util.tbl
 
@@ -30,7 +31,7 @@ M.init = fn.once(function(opts)
     if cfg.auto_download then
       assert(
         util.download_pack {
-          dist_dir = vim.fn.stdpath('data') .. '/site/pack/init/start/',
+          dist_dir = Const.path.init_pack,
           name = 'packer',
           path = 'wbthomason/packer.nvim',
           prompt = 'Download packer.nvim? [y/N]',
@@ -38,6 +39,7 @@ M.init = fn.once(function(opts)
         'Download packer.nvim fail'
       )
 
+      vim.opt.rtp:prepend(Const.path.init_pack .. 'packer')
       -- vim.cmd([[qa]])
     else
       error('not find packer.nvim', vim.log.levels.ERROR)

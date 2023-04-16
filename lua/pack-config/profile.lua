@@ -9,7 +9,7 @@ local this = {
   clock = function()
     return vim.loop.hrtime() / 1000000
   end,
-  context = Context:new(Const.profile_key),
+  context = Context:new(Const.key.profile),
 }
 
 local M = {}

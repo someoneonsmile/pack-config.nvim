@@ -15,7 +15,7 @@ local auto_id = Id:new('fn_once')
 -- use the context
 -- maybe can replace with context
 -- local conf = {}
-local conf = Context:new(Const.util_fn_once_key)
+local conf = Context:new(Const.key.util_fn_once)
 
 M.once = function(f, opts)
   opts = opts or {}

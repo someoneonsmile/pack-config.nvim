@@ -1,7 +1,7 @@
 local Context = require('pack-config.context')
-local const = require('pack-config.const')
+local Const = require('pack-config.const')
 
-local context = Context:new(const.util_id_key)
+local context = Context:new(Const.key.util_id)
 
 local M = {}
 
