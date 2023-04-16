@@ -29,12 +29,15 @@ M.init = fn.once(function(opts)
 
   if not M.exist() then
     if cfg.auto_download then
-      util.download_pack {
-        dist_dir = Const.path.init_pack,
-        name = 'paq',
-        path = 'savq/paq-nvim',
-        prompt = 'Download paq-nvim? [y/N]',
-      }
+      assert(
+        util.download_pack {
+          dist_dir = Const.path.init_pack,
+          name = 'paq',
+          path = 'savq/paq-nvim',
+          prompt = 'Download paq-nvim? [y/N]',
+        },
+        'Download paq fail'
+      )
 
       vim.opt.rtp:prepend(Const.path.init_pack .. 'pqa')
       -- vim.cmd([[qa]])
