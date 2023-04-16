@@ -38,7 +38,7 @@ M.init = fn.once(function(opts)
         'Download lazy.nvim fail'
       )
 
-      vim.cmd([[qa]])
+      -- vim.cmd([[qa]])
     else
       error('not find lazy.nvim', vim.log.levels.ERROR)
     end

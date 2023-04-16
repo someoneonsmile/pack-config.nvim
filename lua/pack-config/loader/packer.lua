@@ -38,7 +38,7 @@ M.init = fn.once(function(opts)
         'Download packer.nvim fail'
       )
 
-      vim.cmd([[qa]])
+      -- vim.cmd([[qa]])
     else
       error('not find packer.nvim', vim.log.levels.ERROR)
     end

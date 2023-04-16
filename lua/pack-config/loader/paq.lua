@@ -34,7 +34,7 @@ M.init = fn.once(function(opts)
         path = 'savq/paq-nvim',
         prompt = 'Download paq-nvim? [y/N]',
       }
-      vim.cmd([[qa]])
+      -- vim.cmd([[qa]])
     else
       error('not find paq-nvim')
     end
