@@ -85,6 +85,7 @@ end
 --- 不支持的 opts 提示
 local not_support_opts_tip = function(packs)
   local support_opts = Set.from_list {
+    1,
     'dir',
     'as',
     'branch',
@@ -95,13 +96,11 @@ local not_support_opts_tip = function(packs)
     'opt',
     'run',
   }
-  local tips = {}
-  for k, v in pairs(packs) do
-    if not Set.contains(support_opts - Set.from_map(v), k) then
-      tips[k] = true
-    end
+  local tips = Set.new()
+  for _, pack in pairs(packs) do
+    tips = tips and Set.different(Set.from_map(pack), support_opts)
   end
-  if not vim.tbl_isempty(tips) then
+  if Set.is_notempty(tips) then
     log.warn('lazy.nvim not support opts', tips)
   end
 end

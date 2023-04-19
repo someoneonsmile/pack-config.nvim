@@ -3,6 +3,7 @@ local util = require('pack-config.util')
 local Const = require('pack-config.const')
 local fn = util.fn
 local tbl = util.tbl
+local Set = util.set
 
 local default_cfg = {
   auto_download = true,
@@ -81,21 +82,19 @@ end
 
 --- 不支持的 opts 提示
 local not_support_opts_tip = function(packs)
-  local support_opts = {
-    [1] = true,
-    as = true,
-    branch = true,
-    pin = true,
-    opt = true,
-    run = true,
+  local support_opts = Set.from_list {
+    1,
+    'as',
+    'branch',
+    'pin',
+    'opt',
+    'run',
   }
-  local tips = {}
-  for k in pairs(packs) do
-    if support_opts[k] == nil then
-      tips[k] = true
-    end
+  local tips = Set.new()
+  for _, pack in pairs(packs) do
+    tips = tips and Set.different(Set.from_map(pack), support_opts)
   end
-  if not vim.tbl_isempty(tips) then
+  if Set.is_notempty(tips) then
     log.warn('paq not support opts', tips)
   end
 end

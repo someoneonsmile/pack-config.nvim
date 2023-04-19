@@ -64,7 +64,7 @@ M.is_type = function(types, v)
     end,
   }
 
-  local type_set = Set.from_list(Set, types)
+  local type_set = Set.from_list(types)
   return Set.contains(type_set, type(v))
     or tbl.tbl_reduce(types, false, function(r, t)
       if r then
