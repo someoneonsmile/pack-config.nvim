@@ -10,7 +10,9 @@ local M = {}
 
 M.name = 'lua'
 
-M.exists = true
+M.exist = function()
+  return true
+end
 
 M.is_pack = function(pack)
   return pack ~= nil
