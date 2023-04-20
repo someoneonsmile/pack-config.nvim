@@ -81,7 +81,6 @@ end
 --  opts.env: env to pack setup/config
 M.setup = fn.once(function(opts)
   Profile.start('global', 'total')
-  pcall(require, 'impatient')
 
   cfg = tbl.tbl_force_deep_extend(default_cfg, opts)
   cfg.scanner = require('pack-config.scanner').with_default(cfg.scanner, true)
