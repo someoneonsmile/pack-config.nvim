@@ -31,7 +31,7 @@ local with_default = function(loader, report_error)
     if report_error then
       error(string.format(
         [[there is no pack loader available here.
-        if use the builtin loader please make sure to download them before
+        if use the builtin loader please make sure to pre-downloaded them.
         builtin_loaders: %s]],
         table.concat(loader_names, ', ')
       ))
