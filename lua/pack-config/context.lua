@@ -56,8 +56,4 @@ M.get_context = function(name)
   return contexts[name]
 end
 
-M.print = function()
-  vim.pretty_print(contexts)
-end
-
 return M
