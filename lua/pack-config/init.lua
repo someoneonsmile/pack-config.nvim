@@ -7,6 +7,7 @@ local fn = util.fn
 local pd = util.predicate
 local tbl = util.tbl
 local Set = util.set
+local enhance = util.enhance
 
 local default_cfg = {
   loader = nil,
@@ -52,7 +53,7 @@ local load = function(scan_paths)
   -- filter valid pack
   local valid_packs = {}
   for _, pack_path in ipairs(pack_paths) do
-    local ok, pack = pcall(dofile, pack_path, 'bt')
+    local ok, pack = enhance.dofile(pack_path, 'bt', cfg.env)
     if not ok then
       log.error('load lua file failed, path = ' .. pack_path, pack)
     elseif not cfg.parser.is_pack(pack) then
@@ -87,8 +88,6 @@ M.setup = fn.once(function(opts)
   cfg.parser = require('pack-config.parser').with_default(cfg.parser, true)
   cfg.loader = require('pack-config.loader').with_default(cfg.loader, true)
 
-  cfg.parser.parse = fn.pipe(fn.with_env(cfg.env))(cfg.parser.parse)
-
   if pd.is_function(cfg.scanner.init) then
     cfg.scanner.init(cfg.scanner_opts)
   end
@@ -100,7 +99,6 @@ M.setup = fn.once(function(opts)
   end
   packer.setup {
     loader = cfg.loader,
-    env = cfg.env,
   }
 
   load(cfg.scan_paths)

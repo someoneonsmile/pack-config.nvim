@@ -25,7 +25,7 @@ require('pack-config').setup {
   -- optional
   parser_opts = {},
 
-  -- optional, env for setup and config fn
+  -- optional, env for all pack file
   env = {
     -- default, for get other pack
     pack = function(pack_name)

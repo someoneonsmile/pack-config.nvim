@@ -214,6 +214,7 @@ end
 -- ----------------------------------------------------------------------
 
 M.with_env = function(env)
+  env = env or {}
   env._G = _G
   env = setmetatable(env, { __index = _G })
   return function(fn)
