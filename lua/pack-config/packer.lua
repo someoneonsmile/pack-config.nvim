@@ -10,7 +10,6 @@ local pd = util.predicate
 local tbl = util.tbl
 
 local loader
-local env
 
 local M = {}
 
@@ -45,12 +44,10 @@ end
 M.setup = function(opts)
   loader = opts.loader
   assert(loader ~= nil, 'please config the loader')
-  env = opts.env or {}
 end
 
 -- 注册插件
 M.regist = function(packs)
-  local with_env = fn.with_env(env)
   for _, pack in pairs(packs) do
     local pack_resources = pack.resources
     tbl.list_extend(relys, parse_rely(pack_resources))
@@ -58,7 +55,6 @@ M.regist = function(packs)
     deprecateds = tbl.tbl_force_extend(deprecateds, tbl.list_to_map(pack_resources.deprecated, fn.first, fn.orign))
 
     local setup_pipe = fn.pipe(
-      with_env,
       fn.with_error_handler(function(msg)
         log.error(pack.name .. '::setup', msg)
       end),
@@ -67,7 +63,6 @@ M.regist = function(packs)
     )(pack.setup)
 
     local config_pipe = fn.pipe(
-      with_env,
       fn.with_error_handler(function(msg)
         log.error(pack.name .. '::config', msg)
       end),
