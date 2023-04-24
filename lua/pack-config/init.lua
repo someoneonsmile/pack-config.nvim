@@ -84,9 +84,9 @@ M.setup = fn.once(function(opts)
   Profile.start('global', 'total')
 
   cfg = tbl.tbl_force_deep_extend(default_cfg, opts)
-  cfg.scanner = require('pack-config.scanner').with_default(cfg.scanner, true)
-  cfg.parser = require('pack-config.parser').with_default(cfg.parser, true)
-  cfg.loader = require('pack-config.loader').with_default(cfg.loader, true)
+  cfg.scanner = require('pack-config.scanner').with_default(cfg.scanner, false)
+  cfg.parser = require('pack-config.parser').with_default(cfg.parser, false)
+  cfg.loader = require('pack-config.loader').with_default(cfg.loader, false)
 
   if pd.is_function(cfg.scanner.init) then
     cfg.scanner.init(cfg.scanner_opts)
