@@ -29,13 +29,9 @@ local function parse_rely(pack_resources)
     local rely = convert.to_table_n(pack_resource.rely, 2)
     if pd.not_empty(rely) then
       tbl.list_extend(results, parse_rely(rely))
-      -- remove the rely's rely
-      vim.tbl_map(function(it)
-        it.rely = nil
-        return it
-      end, rely)
       tbl.list_extend(results, rely)
     end
+    pack_resource.rely = nil
   end
   return results
 end
