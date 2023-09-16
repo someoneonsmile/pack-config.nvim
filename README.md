@@ -16,9 +16,12 @@ require('pack-config').setup {
   -- optional
   loader_opts = {},
   -- optional
-  -- default to select from the order list [vim.loop.fs_scandir, fd] if exists
-  scanner = require('pack-config.scanner.fd'),
+  -- default to select from the order list [uv, fd] if exists
+  -- uv: which use vim.loop.fs_scandir
+  -- fd: which use the cli fd
+  scanner = require('pack-config.scanner.uv'),
   -- optional
+  -- default for uv: https://github.com/someoneonsmile/pack-config.nvim/blob/main/lua/pack-config/scanner/uv.lua#L3C1-L8C2
   scanner_opts = {},
   -- optional, default
   parser = require('pack-config.parser.lua'),
