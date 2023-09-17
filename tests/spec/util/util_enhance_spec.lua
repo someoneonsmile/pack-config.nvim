@@ -14,12 +14,9 @@ describe('enhance test', function()
     if err ~= nil then
       print(err)
     end
-    eq(1, run(func()))
+    eq(1, func()())
   end)
   it('dofile env', function()
-    local run = function(r)
-      return r()
-    end
     local env = { foo = 'bar' }
     local content = 'print("foo:",foo) return function () if foo == "bar" then print(foo) end return foo end'
     local tmpname = os.tmpname()
@@ -27,6 +24,6 @@ describe('enhance test', function()
     file:write(content)
     file:close()
     local ok, func = enhance.dofile(tmpname, 'bt', env)
-    eq('bar', run(func))
+    eq('bar', func())
   end)
 end)

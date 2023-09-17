@@ -9,14 +9,15 @@ M.to_table = function(v)
   else
     result = v
   end
+  if t == nil then
+    return {}
+  end
 
   local t = type(result)
-  if t == 'string' then
-    result = { result }
-  elseif t == 'table' then
+  if t == 'table' then
     result = result
   else
-    result = {}
+    result = { result }
   end
 
   return result
