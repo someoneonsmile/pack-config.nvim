@@ -1,4 +1,3 @@
-local util = require('pack-config.util')
 local enhance = require('pack-config.util.enhance')
 local eq = assert.same
 local neq = assert.are_not.same
