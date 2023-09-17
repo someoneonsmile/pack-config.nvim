@@ -28,7 +28,7 @@ local is_subs = function(subs)
     return false
   end
   subs = convert.to_table(subs)
-  return tbl.tbl_redece(subs, true, function(r, sub)
+  return tbl.tbl_reduce(subs, true, function(r, sub)
     if not r then
       return r
     end
@@ -45,7 +45,7 @@ local subs_flatten = function(sub)
   if pred.tbl_isempty(sub['subs']) then
     return result
   end
-  result = tbl.tbl_redece(sub['subs'], result, function(r, sub)
+  result = tbl.tbl_reduce(sub['subs'], result, function(r, sub)
     sub = subs_flatten(sub)
     if pred.tbl_isempty(r['resources']) or pred.tbl_isempty(sub['resources']) then
       r['resources'] = r['resources'] or sub['resources']
