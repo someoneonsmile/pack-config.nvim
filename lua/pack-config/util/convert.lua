@@ -9,7 +9,7 @@ M.to_table = function(v)
   else
     result = v
   end
-  if t == nil then
+  if result == nil then
     return {}
   end
 
