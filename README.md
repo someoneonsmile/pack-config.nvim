@@ -59,6 +59,39 @@ local M = {}
 M.name = '[pack_name]'
 
 -- optional
+-- subs will eventually be merged into the main pack,
+-- similar to the conf.d directory.
+-- subs support multi-level nesting.
+M.subs = {
+  require('somepath'),
+  {
+    resources = {
+      -- resource
+      {
+        '[resource_url]',
+        as = '',
+        branch = '',
+        tag = '',
+        commit = '',
+        -- lock, skip updating this plugin
+        pin = false,
+        -- manually marks a plugin as optional
+        opt = true,
+        -- update / install hook
+        run = function() end,
+        rely = {
+          -- nested resource
+          {'[other_resource_url]', rely = {}}
+        },
+      }
+    }
+    setup = function() end,
+    config = function() end
+    -- subs = ...
+  },
+}
+
+-- optional
 -- format: string, table or function
 M.resources = function()
   return {
