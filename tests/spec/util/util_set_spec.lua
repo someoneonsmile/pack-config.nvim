@@ -1,6 +1,4 @@
 local Set = require('pack-config.util.set')
-local eq = assert.same
-local neq = assert.are_not.same
 
 describe('util set test', function()
   it('set from_map', function()

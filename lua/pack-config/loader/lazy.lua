@@ -52,7 +52,7 @@ M.init = fn.once(function(opts)
   if not ok then
     error('not find lazy.nvim', vim.log.levels.ERROR)
   end
-end, { notify = vim.log.levels.INFO })
+end)
 
 --- @param pack table
 ---   {

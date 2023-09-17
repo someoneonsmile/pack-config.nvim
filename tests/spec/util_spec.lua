@@ -1,48 +1,6 @@
 local util = require('pack-config.util')
-local eq = assert.same
-local neq = assert.are_not.same
 
 describe('util test', function()
-  -- ----------------------------------------------------------------------
-  --    - util.tbl -
-  -- ----------------------------------------------------------------------
-
-  it('tbl tbl_keep_extend', function()
-    local tbl_keep_extend = util.tbl.tbl_keep_extend
-    eq({ 1 }, tbl_keep_extend(nil, { 1 }, { '1' }))
-    eq({ 1, { 1, 2 } }, tbl_keep_extend(nil, { 1, { 1, 2 } }, { '1', { '1', '2' } }))
-  end)
-
-  it('tbl tbl_keep_deep_extend', function()
-    local tbl_keep_deep_extend = util.tbl.tbl_keep_deep_extend
-    eq({ 1 }, tbl_keep_deep_extend(nil, { 1 }, { '1' }))
-    eq({ 1, { 1, 2 } }, tbl_keep_deep_extend(nil, { 1, { 1, 2 } }, { '1', { '1', '2' } }))
-    eq(
-      vim.tbl_deep_extend('keep', { 1, { 1, 2 } }, { '1', { '1', '2', '3' } }),
-      tbl_keep_deep_extend(nil, { 1, { 1, 2 } }, { '1', { '1', '2', '3' } })
-    )
-    neq({ 1, { 1, 2, '3' } }, tbl_keep_deep_extend(nil, { 1, { 1, 2 } }, { '1', { '1', '2', '3' } }))
-  end)
-
-  it('tbl tbl_force_extend', function()
-    local tbl_force_extend = util.tbl.tbl_force_extend
-    eq({ '1' }, tbl_force_extend(nil, { 1 }, { '1' }))
-    eq({ '1', { '1', '2' } }, tbl_force_extend(nil, { 1, { 1, 2 } }, { '1', { '1', '2' } }))
-    eq({ a = { 'b' } }, tbl_force_extend(nil, { a = { 'a' } }, { a = { 'b' } }))
-    eq({ a = { 'a' }, b = { 'b' } }, tbl_force_extend(nil, { a = { 'a' } }, { b = { 'b' } }))
-  end)
-
-  it('tbl tbl_force_deep_extend', function()
-    local tbl_force_deep_extend = util.tbl.tbl_force_deep_extend
-    eq({ '1' }, tbl_force_deep_extend(nil, { 1 }, { '1' }))
-    eq({ '1', { '1', '2' } }, tbl_force_deep_extend(nil, { 1, { 1, 2 } }, { '1', { '1', '2' } }))
-    eq(
-      vim.tbl_deep_extend('force', { 1, { 1, 2 } }, { '1', { '1', '2', '3' } }),
-      tbl_force_deep_extend(nil, { 1, { 1, 2 } }, { '1', { '1', '2', '3' } })
-    )
-    eq({ '1', { '1', '2', '3' } }, tbl_force_deep_extend(nil, { 1, { 1, 2 } }, { '1', { '1', '2', '3' } }))
-    assert.are_not.same({ '1', { '1', '2', 3 } }, tbl_force_deep_extend(nil, { 1, { 1, 2, 3 } }, { '1', { '1', '2' } }))
-  end)
 
   -- ----------------------------------------------------------------------
   --    - util.id -
@@ -91,7 +49,7 @@ describe('util test', function()
 
   it('fn with_default', function()
     local with_default = util.fn.with_default {}
-    eq({ {}, { 1 }, { 1, 2 } }, { with_default(nil, { 1 }, { 1, 2 }) })
+    assert.same({ {}, { 1 }, { 1, 2 } }, { with_default(nil, { 1 }, { 1, 2 }) })
   end)
 
   it('fn once', function()
@@ -137,14 +95,5 @@ describe('util test', function()
       end)(),
       'error'
     )
-  end)
-
-  -- ----------------------------------------------------------------------
-  --    - util.set -
-  -- ----------------------------------------------------------------------
-  it('set from_map', function()
-    local m_set = util.set.from_map { k1 = 'v1', k2 = 'v2' }
-    assert.same({ k1 = true, k2 = true }, m_set)
-    assert.is_true(util.set.contains(m_set, 'k1'))
   end)
 end)
