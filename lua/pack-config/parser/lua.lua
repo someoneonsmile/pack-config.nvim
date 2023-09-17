@@ -15,7 +15,9 @@ M.exist = function()
   return true
 end
 
-local is_sub = function(sub)
+local is_sub, is_subs
+
+is_sub = function(sub)
   return sub ~= nil
     and can_to_table(sub['resources'])
     and pred.is_type({ 'function', 'nil' }, sub['setup'])
@@ -23,7 +25,7 @@ local is_sub = function(sub)
     and is_subs(sub['subs'])
 end
 
-local is_subs = function(subs)
+is_subs = function(subs)
   if not pred.is_type({ 'function', 'table', 'nil' }, subs) then
     return false
   end
@@ -36,23 +38,24 @@ local is_subs = function(subs)
   end)
 end
 
-local subs_flatten = function(sub)
-  local result = {}
-  result.resources = convert.to_table_n(sub.resources, 2)
-  result.setup = sub.setup
-  result.config = sub.config
+local subs_flatten_merge
+subs_flatten_merge = function(s)
+  local result = s
+  result.resources = convert.to_table_n(result.resources, 2)
+  result.setups = { result.setup }
+  result.configs = { result.config }
 
-  if pred.tbl_isempty(sub['subs']) then
+  if pred.tbl_isempty(result['subs']) then
     return result
   end
-  result = tbl.tbl_reduce(sub['subs'], result, function(r, sub)
-    sub = subs_flatten(sub)
+  result = tbl.tbl_reduce(result['subs'], result, function(r, sub)
+    sub = subs_flatten_merge(sub)
     if pred.tbl_isempty(r['resources']) or pred.tbl_isempty(sub['resources']) then
       r['resources'] = r['resources'] or sub['resources']
     else
       r['resources'] = tbl.list_extend(r['resources'], sub['resources'])
     end
-    if pred.tbl_isempty(r['setup']) or pred.tbl_isempty(sub['setups']) then
+    if pred.tbl_isempty(r['setups']) or pred.tbl_isempty(sub['setups']) then
       r['setups'] = r['setups'] or sub['setups']
     else
       r['setups'] = tbl.list_extend(r['setups'], sub['setups'])
@@ -62,6 +65,7 @@ local subs_flatten = function(sub)
     else
       r['configs'] = tbl.list_extend(r['configs'], sub['configs'])
     end
+    return r
   end)
   result.setup = function()
     if pred.tbl_isempty(result.setups) then
@@ -102,7 +106,8 @@ M.parse = function(pack)
   result.after = convert.to_table(pack.after)
   result.setup = pack.setup
   result.config = pack.config
-  subs_flatten(result)
+  result.subs = pack.subs
+  subs_flatten_merge(result)
   return result
 end
 
