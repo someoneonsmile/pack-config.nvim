@@ -11,7 +11,8 @@ local M = {}
 ---@nodiscard
 M.dofile = function(file_name, mode, env)
   local with_env = fn.with_env(env)
-  return assert(pcall(with_env(assert(loadfile(file_name, mode or 'bt')), env)))
+  local f = assert(loadfile(file_name, mode or 'bt'))
+  return assert(pcall(with_env(f)))
 end
 
 return M
