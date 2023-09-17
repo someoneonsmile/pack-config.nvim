@@ -55,7 +55,7 @@ M.init = fn.once(function(opts)
 
   packer.reset()
   packer.init(cfg.outer_config)
-end, { notify = vim.log.levels.INFO })
+end)
 
 --- @param pack table
 ---   {
