@@ -84,6 +84,17 @@ M.setup = fn.once(function(opts)
   Profile.start('global', 'total')
 
   cfg = tbl.tbl_force_deep_extend(default_cfg, opts)
+  cfg.env.require = enhance.with_env_require(cfg.env)
+  cfg.env.R = enhance.with_env_require(cfg.env)
+  -- env
+  setmetatable(cfg.env, {
+    __index = _G,
+    -- __newindex = function(table, key, value)
+    --   rawset(_G, key, value)
+    -- end,
+    __newindex = _G,
+  })
+
   cfg.scanner = require('pack-config.scanner').with_default(cfg.scanner, false)
   cfg.parser = require('pack-config.parser').with_default(cfg.parser, false)
   cfg.loader = require('pack-config.loader').with_default(cfg.loader, false)

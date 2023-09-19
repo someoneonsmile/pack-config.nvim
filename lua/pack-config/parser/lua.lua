@@ -55,16 +55,8 @@ subs_flatten_merge = function(s)
     else
       r['resources'] = tbl.list_extend(r['resources'], sub['resources'])
     end
-    if pred.tbl_isempty(r['setups']) or pred.tbl_isempty(sub['setups']) then
-      r['setups'] = r['setups'] or sub['setups']
-    else
-      r['setups'] = tbl.list_extend(r['setups'], sub['setups'])
-    end
-    if pred.tbl_isempty(r['configs']) or pred.tbl_isempty(sub['configs']) then
-      r['configs'] = r['configs'] or sub['configs']
-    else
-      r['configs'] = tbl.list_extend(r['configs'], sub['configs'])
-    end
+    r['setups'] = tbl.list_extend(r['setups'], sub['setups'])
+    r['configs'] = tbl.list_extend(r['configs'], sub['configs'])
     return r
   end)
   result.setup = function()

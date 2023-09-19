@@ -79,7 +79,9 @@ end
 -- ----------------------------------------------------------------------
 
 M.list_extend = function(dst, ...)
-  for _, src in pairs { ... } do
+  default = fn.with_default {}
+  dst = default(dst)
+  for _, src in pairs { default(...) } do
     vim.list_extend(dst, src)
   end
   return dst
