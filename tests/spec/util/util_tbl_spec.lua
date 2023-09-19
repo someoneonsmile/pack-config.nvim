@@ -1,4 +1,4 @@
-local tbl = require('pack-config.tbl')
+local tbl = require('pack-config.util.tbl')
 
 describe('util tbl test', function()
   it('tbl tbl_keep_extend', function()
@@ -36,5 +36,11 @@ describe('util tbl test', function()
     )
     assert.same({ '1', { '1', '2', '3' } }, tbl_force_deep_extend(nil, { 1, { 1, 2 } }, { '1', { '1', '2', '3' } }))
     assert.are_not.same({ '1', { '1', '2', 3 } }, tbl_force_deep_extend(nil, { 1, { 1, 2, 3 } }, { '1', { '1', '2' } }))
+  end)
+
+  it('tbl list_extend', function()
+    local list_extend = tbl.list_extend
+    assert.same({ 1 }, list_extend(nil, { 1 }))
+    assert.same({ 1, '1' }, list_extend(nil, { 1 }, { '1' }))
   end)
 end)
