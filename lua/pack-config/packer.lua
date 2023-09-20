@@ -50,24 +50,27 @@ M.regist = function(packs)
     tbl.list_extend(resources, pack_resources)
     deprecateds = tbl.tbl_force_extend(deprecateds, tbl.list_to_map(pack_resources.deprecated, fn.first, fn.orign))
 
-    local setup_pipe = fn.pipe(
-      fn.with_error_handler(function(msg)
-        log.error(pack.name .. '::setup', msg)
-      end),
-      Profile.with_profile('setup-config', pack.name .. '::setup'),
-      fn.once
-    )(pack.setup)
+    if pd.is_type({ 'function' }, pack.setup) then
+      local setup_pipe = fn.pipe(
+        fn.with_error_handler(function(msg)
+          log.error(pack.name .. '::setup', msg)
+        end),
+        Profile.with_profile('setup-config', pack.name .. '::setup'),
+        fn.once
+      )(pack.setup)
+      pack.setup = setup_pipe
+    end
 
-    local config_pipe = fn.pipe(
-      fn.with_error_handler(function(msg)
-        log.error(pack.name .. '::config', msg)
-      end),
-      Profile.with_profile('setup-config', pack.name .. '::config'),
-      fn.once
-    )(pack.config)
-
-    pack.setup = setup_pipe
-    pack.config = config_pipe
+    if pd.is_type({ 'function' }, pack.config) then
+      local config_pipe = fn.pipe(
+        fn.with_error_handler(function(msg)
+          log.error(pack.name .. '::config', msg)
+        end),
+        Profile.with_profile('setup-config', pack.name .. '::config'),
+        fn.once
+      )(pack.config)
+      pack.config = config_pipe
+    end
 
     if regist_packs:get(pack.name) ~= nil then
       error(pack.name .. ' already exists', vim.log.levels.ERROR)
@@ -123,10 +126,14 @@ M.done = function()
 
   -- call setup() and config()
   for _, pack in ipairs(regist_packs_sorted) do
-    pack.setup()
+    if pd.is_type({ 'function' }, pack.setup) then
+      pack.setup()
+    end
   end
   for _, pack in ipairs(regist_packs_sorted) do
-    pack.config()
+    if pd.is_type({ 'function' }, pack.config) then
+      pack.config()
+    end
   end
 end
 
