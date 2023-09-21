@@ -203,7 +203,7 @@ M.reverse = function(...)
   for i, v in ipairs { ... } do
     result[n + 1 - i] = v
   end
-  return result
+  return unpack(result)
 end
 
 M.take = M.curry(function(n, ...)
