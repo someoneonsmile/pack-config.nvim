@@ -71,16 +71,60 @@ M.with_default = function(default_value)
 end
 
 -- ----------------------------------------------------------------------
+--    - higher order logic function -
+-- ----------------------------------------------------------------------
+
+M.fn_negate = function(fn)
+  return function(...)
+    return not fn((...))
+  end
+end
+
+M.fn_and = function(...)
+  local fns = { ... }
+  return function(...)
+    local args = { ... }
+    M.reduce(function(r, fn)
+      return r and fn(unpack(args))
+    end, true, unpack(fns))
+  end
+end
+
+M.fn_or = function(...)
+  local fns = { ... }
+  return function(...)
+    local args = { ... }
+    M.reduce(function(r, fn)
+      return r or fn(unpack(args))
+    end, false, unpack(fns))
+  end
+end
+
+-- ----------------------------------------------------------------------
 --    - curry fn endwith () -
 -- ----------------------------------------------------------------------
 
-M.curry = function(fn, ...)
-  local args = { ... }
+M.curry = function(fn)
+  local args = {}
   local function inner(...)
     if select('#', ...) == 0 then
       return fn(M.unpack(args))
     else
-      vim.list_extend(args, { ... })
+      args = vim.list_extend(args, { ... })
+      return inner
+    end
+  end
+
+  return inner
+end
+
+M.curry_right = function(fn)
+  local args = {}
+  local function inner(...)
+    if select('#', ...) == 0 then
+      return fn(M.reverse(M.unpack(args)))
+    else
+      args = vim.list_extend(args, { ... })
       return inner
     end
   end
@@ -163,7 +207,7 @@ M.reverse = function(...)
 end
 
 M.take = M.curry(function(n, ...)
-  if n < select('#', ...) then
+  if n >= select('#', ...) then
     return ...
   end
   local r = { ... }
@@ -195,7 +239,7 @@ end)
 
 M.dot_chain = function(tbl, ...)
   local not_strings = vim.tbl_filter(function(it)
-    return type ~= 'string'
+    return type(it) ~= 'string'
   end, { ... })
   if not vim.tbl_isempty(not_strings) then
     error('args contains not string type')

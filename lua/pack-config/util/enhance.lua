@@ -15,8 +15,12 @@ local M = {}
 --   return assert(pcall(with_env(f)))
 -- end
 M.dofile = function(file_name, mode, env)
-  local f = assert(loadfile(file_name, mode or 'bt', env))
-  return assert(pcall(f))
+  local f = loadfile(file_name, mode or 'bt', env)
+  if not pred.is_type({ 'function' }, f) then
+    return false
+  end
+  ---@diagnostic disable-next-line: param-type-mismatch
+  return pcall(f)
 end
 
 M.require = function(moudle_name, env)
