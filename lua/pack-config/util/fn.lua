@@ -4,6 +4,7 @@ local Id = require('pack-config.util').id
 
 local M = {}
 
+local unpack = unpack
 M.unpack = unpack
 
 -- ----------------------------------------------------------------------
@@ -66,7 +67,7 @@ M.with_default = function(default_value)
     for i = 1, l do
       table.insert(r, select(i, ...) or default_value)
     end
-    return M.unpack(r)
+    return unpack(r)
   end
 end
 
@@ -108,7 +109,7 @@ M.curry = function(fn)
   local args = {}
   local function inner(...)
     if select('#', ...) == 0 then
-      return fn(M.unpack(args))
+      return fn(unpack(args))
     else
       args = vim.list_extend(args, { ... })
       return inner
@@ -122,13 +123,12 @@ M.curry_right = function(fn)
   local args = {}
   local function inner(...)
     if select('#', ...) == 0 then
-      return fn(M.reverse(M.unpack(args)))
+      return fn(M.reverse(unpack(args)))
     else
       args = vim.list_extend(args, { ... })
       return inner
     end
   end
-
   return inner
 end
 
@@ -173,7 +173,7 @@ end
 M.partial = function(fn, ...)
   local args = { ... }
   return function(...)
-    fn(M.unpack(args), ...)
+    fn(unpack(args), ...)
   end
 end
 
@@ -184,7 +184,15 @@ M.filter = M.curry(function(fn, ...)
       table.insert(result, v)
     end
   end
-  return result
+  return unpack(result)
+end)
+
+M.map = M.curry(function(fn, ...)
+  local result = {}
+  for _, v in ipairs { ... } do
+    table.insert(result, fn(v))
+  end
+  return unpack(result)
 end)
 
 M.reject = M.curry(function(fn, ...)
@@ -194,7 +202,7 @@ M.reject = M.curry(function(fn, ...)
       table.insert(result, v)
     end
   end
-  return result
+  return unpack(result)
 end)
 
 M.reverse = function(...)
@@ -212,12 +220,12 @@ M.take = M.curry(function(n, ...)
   end
   local r = { ... }
   r[n + 1] = nil
-  return M.unpack(r)
+  return unpack(r)
 end)
 
 M.drop = M.curry(select)
 
-M.take_last = M.curry(function(n, ...)
+M.take_right = M.curry(function(n, ...)
   local len = select('#', ...)
   if n >= len then
     return ...
@@ -225,7 +233,7 @@ M.take_last = M.curry(function(n, ...)
   return M.drop(len - n, ...)
 end)
 
-M.drop_last = M.curry(function(n, ...)
+M.drop_right = M.curry(function(n, ...)
   local len = select('#', ...)
   if n >= len then
     return
@@ -275,7 +283,7 @@ M.with_defer = function(timeout)
     return function(...)
       local args = { ... }
       vim.defer_fn(function()
-        fn(M.unpack(args))
+        fn(unpack(args))
       end, timeout)
     end
   end
