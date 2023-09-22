@@ -215,15 +215,14 @@ M.reverse = function(...)
 end
 
 M.take = M.curry(function(n, ...)
-  if n >= select('#', ...) then
+  local len = select('#', ...)
+  if n >= len then
     return ...
   end
   local r = { ... }
   r[n + 1] = nil
   return unpack(r)
 end)
-
-M.drop = M.curry(select)
 
 M.take_right = M.curry(function(n, ...)
   local len = select('#', ...)
@@ -233,6 +232,8 @@ M.take_right = M.curry(function(n, ...)
   return M.drop(len - n, ...)
 end)
 
+M.drop = M.curry(select)
+
 M.drop_right = M.curry(function(n, ...)
   local len = select('#', ...)
   if n >= len then
@@ -240,6 +241,8 @@ M.drop_right = M.curry(function(n, ...)
   end
   return M.take(len - n, ...)
 end)
+
+M.rest = M.drop(2)
 
 -- ----------------------------------------------------------------------
 --    - avoid call on nil value -
