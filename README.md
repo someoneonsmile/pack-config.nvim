@@ -86,7 +86,12 @@ M.subs = {
       }
     }
     setup = function() end,
-    config = function() end
+    config = function() end,
+    -- lazy = true
+    -- lazy also support function that return boolean
+    lazy = function()
+      return true
+    end
     -- subs = ...
   },
 }
@@ -139,6 +144,12 @@ M.config = function()
   -- use pack fn to load other pack
   local other_pack = pack('other_pack_name')
   ...
+end
+
+-- lazy = true
+-- lazy also support function that return boolean
+lazy = function()
+  return true
 end
 
 return M
