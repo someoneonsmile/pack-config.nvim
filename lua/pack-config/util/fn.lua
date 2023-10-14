@@ -308,4 +308,12 @@ M.with_error_handler = function(error_handler)
   end
 end
 
+-- ----------------------------------------------------------------------
+--    - lazy -
+-- ----------------------------------------------------------------------
+
+M.with_lazy = function(f)
+  return vim.schedule_wrap(f)
+end
+
 return M

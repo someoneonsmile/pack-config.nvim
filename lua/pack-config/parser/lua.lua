@@ -2,12 +2,23 @@ local util = require('pack-config.util')
 local convert = util.convert
 local pred = util.predicate
 local tbl = util.tbl
+local fn = util.fn
 
 local function can_to_table(v)
   return pred.is_type({ 'function', 'string', 'table', 'nil' }, v)
 end
 
+local default_cfg = {
+  lazy = false,
+}
+
+local cfg = default_opts
+
 local M = {}
+
+M.init = fn.once(function(opts)
+  cfg = tbl.tbl_force_deep_extend(default_cfg, opts)
+end)
 
 M.name = 'lua'
 
@@ -17,11 +28,13 @@ end
 
 local is_sub, is_subs
 
+-- breadth first
 is_sub = function(sub)
   return sub ~= nil
     and can_to_table(sub['resources'])
     and pred.is_type({ 'function', 'nil' }, sub['setup'])
     and pred.is_type({ 'function', 'nil' }, sub['config'])
+    and pred.is_type({ 'boolean', 'nil' }, sub['lazy'])
     and is_subs(sub['subs'])
 end
 
@@ -41,7 +54,15 @@ end
 local subs_flatten_merge
 subs_flatten_merge = function(s)
   local result = s
+
+  -- parse sub
   result.resources = convert.to_table_n(result.resources, 2)
+  if result.lazy or cfg.lazy then
+    result.setup = fn.with_lazy(result.setup)
+    result.config = fn.with_lazy(result.config)
+  end
+
+  -- collect
   result.setups = { result.setup }
   result.configs = { result.config }
 
@@ -96,6 +117,11 @@ M.parse = function(pack)
   result.config = pack.config
   result.subs = pack.subs
   subs_flatten_merge(result)
+  -- lazy
+  if pack.lazy or cfg.lazy then
+    result.setup = fn.with_lazy(result.setup)
+    result.config = fn.with_lazy(result.config)
+  end
   return result
 end
 
