@@ -362,13 +362,15 @@ end
 
 <details>
 
-| index |     group    |        item        |  time  |
-| ----- | ------------ | ------------------ | ------ |
-|   1   | setup-config |     lsp::setup     |  13.42 |
-|   2   | setup-config |  telescope::setup  |  12.60 |
-|   3   | setup-config |    theme::config   |  11.64 |
-|   4   | setup-config |   complete::setup  |  11.23 |
-|   5   | setup-config |  statusline::setup |  10.15 |
+<summary> example </summary>
+
+| index | group        | item              | time  |
+| ----- | ------------ | ----------------- | ----- |
+| 1     | setup-config | lsp::setup        | 13.42 |
+| 2     | setup-config | telescope::setup  | 12.60 |
+| 3     | setup-config | theme::config     | 11.64 |
+| 4     | setup-config | complete::setup   | 11.23 |
+| 5     | setup-config | statusline::setup | 10.15 |
 
 </details>
 
