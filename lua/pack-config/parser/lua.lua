@@ -34,7 +34,7 @@ is_sub = function(sub)
     and can_to_table(sub['resources'])
     and pred.is_type({ 'function', 'nil' }, sub['setup'])
     and pred.is_type({ 'function', 'nil' }, sub['config'])
-    and pred.is_type({ 'boolean', 'nil' }, sub['lazy'])
+    and pred.is_type({ 'function', 'boolean', 'nil' }, sub['lazy'])
     and is_subs(sub['subs'])
 end
 
@@ -57,6 +57,7 @@ subs_flatten_merge = function(s)
 
   -- parse sub
   result.resources = convert.to_table_n(result.resources, 2)
+  result.lazy = convert.to_bool(result.lazy)
   if result.lazy or cfg.lazy then
     result.setup = fn.with_lazy(result.setup)
     result.config = fn.with_lazy(result.config)
@@ -103,6 +104,7 @@ local is_pack = function(pack)
     and can_to_table(pack['after'])
     and pred.is_type({ 'function', 'nil' }, pack['setup'])
     and pred.is_type({ 'function', 'nil' }, pack['config'])
+    and pred.is_type({ 'function', 'boolean', 'nil' }, pack['lazy'])
     and is_subs(pack['subs'])
 end
 
@@ -118,7 +120,7 @@ M.parse = function(pack)
   result.subs = pack.subs
   subs_flatten_merge(result)
   -- lazy
-  if pack.lazy or cfg.lazy then
+  if convert.to_bool(pack.lazy) or cfg.lazy then
     result.setup = fn.with_lazy(result.setup)
     result.config = fn.with_lazy(result.config)
   end
