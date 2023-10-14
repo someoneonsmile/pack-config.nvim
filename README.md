@@ -266,6 +266,8 @@ end
 
 `:lua require('pack-config.profile').report()`
 
+[commands](#Commands)
+
 ## Custom scanner, parser and loader
 
 <details>
@@ -351,6 +353,22 @@ end
 ```
 
 </details>
+
+</details>
+
+## Commands
+
+`PackProfileReport`: report the pack profile data
+
+<details>
+
+| index |     group    |        item        |  time  |
+| ----- | ------------ | ------------------ | ------ |
+|   1   | setup-config |     lsp::setup     |  13.42 |
+|   2   | setup-config |  telescope::setup  |  12.60 |
+|   3   | setup-config |    theme::config   |  11.64 |
+|   4   | setup-config |   complete::setup  |  11.23 |
+|   5   | setup-config |  statusline::setup |  10.15 |
 
 </details>
 
