@@ -7,19 +7,20 @@ self = false
 
 -- Glorious list of warnings: https://luacheck.readthedocs.io/en/stable/warnings.html
 ignore = {
-  "111",
-  "113",
-  "212",
-  "432",
+  '111',
+  '113',
+  '212',
+  '432',
 }
 
 -- Global objects defined by the C code
 globals = {
+  'vim.g',
 }
 
 read_globals = {
-  "vim",
-  "unpack",
+  'vim',
+  'unpack',
 }
 
-std = "luajit"
+std = 'luajit'
