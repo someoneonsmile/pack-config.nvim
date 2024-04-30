@@ -312,8 +312,6 @@ end
 --    - lazy -
 -- ----------------------------------------------------------------------
 
-M.with_lazy = function(f)
-  return vim.schedule_wrap(f)
-end
+M.with_lazy = vim.schedule_wrap
 
 return M
