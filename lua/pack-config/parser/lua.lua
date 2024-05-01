@@ -120,7 +120,8 @@ M.parse = function(pack)
   result.subs = pack.subs
   subs_flatten_merge(result)
   -- lazy
-  if convert.to_bool(pack.lazy) or cfg.lazy then
+  -- if convert.to_bool(pack.lazy) or cfg.lazy then
+  if pred.is_nil(pack.lazy) and cfg.lazy or convert.to_bool(pack.lazy) then
     result.setup = fn.with_lazy(result.setup)
     result.config = fn.with_lazy(result.config)
   end
