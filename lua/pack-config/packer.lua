@@ -27,11 +27,11 @@ local function parse_rely(pack_resources)
   end
   for _, pack_resource in pairs(pack_resources) do
     local rely = convert.to_table_n(pack_resource.rely, 2)
+    pack_resource.rely = nil
     if pd.not_empty(rely) then
       tbl.list_extend(results, parse_rely(rely))
       tbl.list_extend(results, rely)
     end
-    pack_resource.rely = nil
   end
   return results
 end

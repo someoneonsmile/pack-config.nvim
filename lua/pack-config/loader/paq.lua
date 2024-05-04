@@ -92,7 +92,7 @@ local not_support_opts_tip = function(packs)
   }
   local tips = Set.new()
   for _, pack in pairs(packs) do
-    tips = tips and Set.different(Set.from_map(pack), support_opts)
+    tips = tips .. Set.different(Set.from_map(pack), support_opts)
   end
   if Set.is_notempty(tips) then
     log.warn('paq not support opts', tips)
