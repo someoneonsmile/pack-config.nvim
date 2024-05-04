@@ -55,8 +55,7 @@ is_subs = function(subs)
   end)
 end
 
-local subs_flatten_merge
-subs_flatten_merge = function(s)
+local function subs_flatten_merge(s)
   local result = s
 
   -- parse sub
@@ -109,6 +108,18 @@ subs_flatten_merge = function(s)
   return result
 end
 
+-- 解析依赖
+local function parse_rely(pack_resources)
+  if pred.is_empty(pack_resources) then
+    return
+  end
+  for _, pack_resource in pairs(pack_resources) do
+    local rely = convert.to_table_n(pack_resource.rely, 2)
+    pack_resource.rely = parse_rely(rely)
+  end
+  return pack_resources
+end
+
 local is_pack = function(pack)
   return pack ~= nil
     and pred.is_type({ 'table' }, pack)
@@ -132,6 +143,7 @@ M.parse = function(pack)
   result.config = pack.config
   result.subs = pack.subs
   subs_flatten_merge(result)
+  parse_rely(result.resources)
   -- lazy
   -- if convert.to_bool(pack.lazy) or cfg.lazy then
   -- if is_lazy(pack.lazy) then

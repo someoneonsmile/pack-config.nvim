@@ -18,18 +18,17 @@ local relys = {}
 local resources = {}
 local deprecateds = {}
 
--- 解析依赖
-local function parse_rely(pack_resources)
-  pack_resources = convert.to_table_n(pack_resources, 2)
+-- 收集依赖
+local function collect_rely(pack_resources)
   local results = {}
   if pd.is_empty(pack_resources) then
     return results
   end
   for _, pack_resource in pairs(pack_resources) do
-    local rely = convert.to_table_n(pack_resource.rely, 2)
+    local rely = pack_resource.rely
     pack_resource.rely = nil
     if pd.not_empty(rely) then
-      tbl.list_extend(results, parse_rely(rely))
+      tbl.list_extend(results, collect_rely(rely))
       tbl.list_extend(results, rely)
     end
   end
@@ -46,7 +45,7 @@ end
 M.regist = function(packs)
   for _, pack in pairs(packs) do
     local pack_resources = pack.resources
-    tbl.list_extend(relys, parse_rely(pack_resources))
+    tbl.list_extend(relys, collect_rely(pack_resources))
     tbl.list_extend(resources, pack_resources)
     deprecateds = tbl.tbl_force_extend(deprecateds, tbl.list_to_map(pack_resources.deprecated, fn.first, fn.orign))
 
