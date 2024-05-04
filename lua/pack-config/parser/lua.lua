@@ -14,6 +14,10 @@ local default_cfg = {
 
 local cfg = default_opts
 
+local is_lazy = function(lazy_value)
+  return pred.is_nil(lazy_value) and cfg.lazy or convert.to_bool(lazy_value)
+end
+
 local M = {}
 
 M.init = fn.once(function(opts)
@@ -58,7 +62,7 @@ subs_flatten_merge = function(s)
   -- parse sub
   result.resources = convert.to_table_n(result.resources, 2)
   result.lazy = convert.to_bool(result.lazy)
-  if result.lazy or cfg.lazy then
+  if is_lazy(result.lazy) then
     result.setup = fn.with_lazy(result.setup)
     result.config = fn.with_lazy(result.config)
   end
@@ -77,20 +81,29 @@ subs_flatten_merge = function(s)
     r['configs'] = tbl.list_extend(r['configs'], sub['configs'])
     return r
   end)
-  result.setup = function()
-    if pred.tbl_isempty(result.setups) then
-      return
-    end
-    for _, f in ipairs(result.setups) do
-      f()
+  local setups = tbl.list_map_filter(result.setups, function(r)
+    return r
+  end)
+  if pred.tbl_isempty(setups) then
+    result.setup = nil
+  else
+    result.setup = function()
+      for _, f in ipairs(setups) do
+        f()
+      end
     end
   end
-  result.config = function()
-    if pred.tbl_isempty(result.configs) then
-      return
-    end
-    for _, f in ipairs(result.configs) do
-      f()
+
+  local configs = tbl.list_map_filter(result.configs, function(r)
+    return r
+  end)
+  if pred.tbl_isempty(configs) then
+    result.config = nil
+  else
+    result.config = function()
+      for _, f in ipairs(configs) do
+        f()
+      end
     end
   end
   return result
@@ -121,10 +134,10 @@ M.parse = function(pack)
   subs_flatten_merge(result)
   -- lazy
   -- if convert.to_bool(pack.lazy) or cfg.lazy then
-  if pred.is_nil(pack.lazy) and cfg.lazy or convert.to_bool(pack.lazy) then
-    result.setup = fn.with_lazy(result.setup)
-    result.config = fn.with_lazy(result.config)
-  end
+  -- if is_lazy(pack.lazy) then
+  --   result.setup = fn.with_lazy(result.setup)
+  --   result.config = fn.with_lazy(result.config)
+  -- end
   return result
 end
 

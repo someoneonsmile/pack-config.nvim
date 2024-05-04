@@ -320,7 +320,7 @@ end
 
 M.with_lazy = function(f)
   if f == nil then
-    return M.noop
+    return nil
   end
   return vim.schedule_wrap(f)
 end
