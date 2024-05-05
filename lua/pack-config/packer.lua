@@ -4,7 +4,6 @@ local Context = require('pack-config.context')
 local Const = require('pack-config.const')
 local Profile = require('pack-config.profile')
 
-local convert = util.convert
 local fn = util.fn
 local pd = util.predicate
 local tbl = util.tbl
