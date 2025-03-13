@@ -2,36 +2,6 @@ local log = require('pack-config.log')
 
 local M = {}
 
-M.answer = function(question, answers)
-  answers = M.set.from_list(M.convert.to_table(answers or { 'y', 'yes' }))
-  local input = vim.fn.input(question)
-  return M.set.contains(answers, input)
-end
-
--- ----------------------------------------------------------------------
---    - download -
--- ----------------------------------------------------------------------
-
--- @param pack
---  pack.dest_dir string dest dir
---  pack.prompt tip to user
---  pack.name
---  pack.path pack path
-M.download_pack = function(pack)
-  vim.fn.mkdir(pack.dist_dir, 'p')
-  if not vim.endswith(pack.dist_dir, '/') then
-    pack.dist_dir = pack.dist_dir .. '/'
-  end
-  if pack.prompt and M.answer(pack.prompt .. ': ') then
-    log.info(string.format('git clone https://github.com/%s.git %s', pack.path, pack.dist_dir .. pack.name))
-    local out =
-      vim.fn.system(string.format('git clone https://github.com/%s.git %s', pack.path, pack.dist_dir .. pack.name))
-    log.info(out)
-    return vim.v.shell_error == 0
-  end
-  return false
-end
-
 -- ----------------------------------------------------------------------
 --    - update require load file -
 -- ----------------------------------------------------------------------

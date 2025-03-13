@@ -1,6 +1,7 @@
 local Const = require('pack-config.const')
 local log = require('pack-config.log')
 local util = require('pack-config.util')
+local helper = require('pack-config.helper')
 local fn = util.fn
 local tbl = util.tbl
 local Set = util.set
@@ -22,25 +23,28 @@ local M = {}
 M.name = 'lazy'
 
 M.exist = function()
-  return pcall(require, 'lazy')
+  return helper.is_pack_exists(M.name)
 end
 
 M.init = fn.once(function(opts)
-  cfg = tbl.tbl_force_deep_extend(default_cfg, opts)
-
+  cfg = tbl.tbl_keep_deep_extend(opts, default_cfg)
+  local dist_dir = cfg.outer_config.root or vim.fn.stdpath('data') .. '/lazy/'
+  local lazy_path = dist_dir .. 'lazy.nvim'
+  vim.opt.rtp:prepend(lazy_path)
   if not M.exist() then
     if cfg.auto_download then
       assert(
-        util.download_pack {
-          dist_dir = Const.path.init_pack,
-          name = 'lazy',
+        helper.download_pack {
+          dist_dir = dist_dir,
+          name = 'lazy.nvim',
           path = 'folke/lazy.nvim',
-          prompt = 'Download lazy.nvim? [y/N]',
+          prompt = 'Download lazy.nvim?',
+          -- temp = true,
         },
         'Download lazy.nvim fail'
       )
 
-      vim.opt.rtp:prepend(Const.path.init_pack .. 'lazy')
+      -- vim.cmd('packadd! lazy')
       -- vim.cmd([[qa]])
     else
       error('not find lazy.nvim', vim.log.levels.ERROR)

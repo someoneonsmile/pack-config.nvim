@@ -10,6 +10,7 @@ M.key = {
 
 M.path = {
   init_pack = vim.fn.stdpath('data') .. '/site/pack/init/start/',
+  init_pack_opt = vim.fn.stdpath('data') .. '/site/pack/init/opt/',
 }
 
 return M

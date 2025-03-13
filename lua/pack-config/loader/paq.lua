@@ -1,6 +1,7 @@
 local log = require('pack-config.log')
 local util = require('pack-config.util')
 local Const = require('pack-config.const')
+local helper = require('pack-config.helper')
 local fn = util.fn
 local tbl = util.tbl
 local Set = util.set
@@ -22,7 +23,7 @@ local M = {}
 M.name = 'paq'
 
 M.exist = function()
-  return pcall(require, 'paq')
+  return helper.is_pack_exists(M.name)
 end
 
 M.init = fn.once(function(opts)
@@ -31,11 +32,11 @@ M.init = fn.once(function(opts)
   if not M.exist() then
     if cfg.auto_download then
       assert(
-        util.download_pack {
+        helper.download_pack {
           dist_dir = Const.path.init_pack,
           name = 'paq',
           path = 'savq/paq-nvim',
-          prompt = 'Download paq-nvim? [y/N]',
+          prompt = 'Download paq-nvim?',
         },
         'Download paq fail'
       )
