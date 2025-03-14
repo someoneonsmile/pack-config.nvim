@@ -117,6 +117,6 @@ M.setup = fn.once(function(opts)
   Profile.stop('global', 'total')
 end)
 
-M.version = '0.7.1'
+M.version = '0.8.0'
 
 return M
