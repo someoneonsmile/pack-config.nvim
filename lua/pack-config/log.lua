@@ -94,13 +94,8 @@ local endpoint_handles = {
       -- log to console function
       --
       local log_to_console = function()
-        local console_string = string.format(
-          '[%-6s%s] %s: %s',
-          level_config.name:upper(),
-          os.date('%H:%M:%S'),
-          lineinfo,
-          msg
-        )
+        local console_string =
+          string.format('[%-6s%s] %s: %s', level_config.name:upper(), os.date('%H:%M:%S'), lineinfo, msg)
 
         if config.highlights and level_config.hl then
           vim.cmd(string.format('echohl %s', level_config.hl))
@@ -112,7 +107,7 @@ local endpoint_handles = {
 
           local ok = pcall(vim.cmd, string.format([[echom "%s"]], formatted_msg))
           if not ok then
-            vim.api.nvim_out_write(msg .. '\n')
+            vim.api.nvim_echo({ { msg } }, true, {})
           end
         end
 
