@@ -60,8 +60,8 @@ local function subs_flatten_merge(s)
 
   -- parse sub
   result.resources = convert.to_table_n(result.resources, 2)
-  result.lazy = convert.to_bool(result.lazy)
-  if is_lazy(result.lazy) then
+  result.lazy = is_lazy(result.lazy)
+  if result.lazy then
     result.setup = fn.with_lazy(result.setup)
     result.config = fn.with_lazy(result.config)
   end
