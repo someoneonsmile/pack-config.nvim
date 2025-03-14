@@ -391,3 +391,4 @@ end
 - [x] profile
 - [x] error handler
 - [ ] parallel
+- [ ] self update
