@@ -134,6 +134,8 @@ M.done = function()
   for _, pack in ipairs(regist_packs_sorted) do
     if pd.is_type({ 'function' }, pack.setup) then
       if pack.lazy then
+        -- 之所以可以这样做是因为
+        -- vim.schedule 也会保持先后顺序
         vim.schedule(pack.setup)
       else
         pack.setup()
