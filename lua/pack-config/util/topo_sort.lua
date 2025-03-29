@@ -48,7 +48,6 @@ end
 --    - generator iterator -
 -- ----------------------------------------------------------------------
 
--- @return name, pack
 M.sort_iter = function(self, tbl)
   if tbl == nil or #tbl == 0 then
     return nil
@@ -74,6 +73,7 @@ M.sort_iter = function(self, tbl)
 
   local circle_tiped = false
 
+  -- @return name, pack
   return function()
     if next(heads) ~= nil then
       local head = table.remove(heads)

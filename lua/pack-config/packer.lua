@@ -46,7 +46,7 @@ M.regist = function(packs)
     local pack_resources = pack.resources
     tbl.list_extend(relys, collect_rely(pack_resources))
     tbl.list_extend(resources, pack_resources)
-    deprecateds = tbl.tbl_force_extend(deprecateds, tbl.list_to_map(pack_resources.deprecated, fn.first, fn.orign))
+    deprecateds = tbl.tbl_force_extend(deprecateds, tbl.list_to_map(pack_resources.deprecated, fn.first, fn.origin))
 
     if pd.is_type({ 'function' }, pack.setup) then
       local setup_pipe = fn.pipe(
@@ -122,15 +122,30 @@ M.done = function()
   end)
   local regist_packs_sorted = sorter:sort(regist_packs)
 
+  -- deal lazy spread
+  for _, pack in ipairs(regist_packs_sorted) do
+    pack.lazy = pack.lazy
+      or tbl.tbl_reduce(pack.after, false, function(r, v, _k)
+        return r or M.get_pack(v).lazy
+      end)
+  end
+
   -- call setup() and config()
   for _, pack in ipairs(regist_packs_sorted) do
     if pd.is_type({ 'function' }, pack.setup) then
-      pack.setup()
+      if pack.lazy then
+        -- 之所以可以这样做是因为
+        -- vim.schedule 也会保持先后顺序
+        vim.schedule(pack.setup)
+      else
+        pack.setup()
+      end
     end
   end
   for _, pack in ipairs(regist_packs_sorted) do
     if pd.is_type({ 'function' }, pack.config) then
-      pack.config()
+      -- config default run in schedule
+      vim.schedule(pack.config)
     end
   end
 end

@@ -1,4 +1,3 @@
-local Const = require('pack-config.const')
 local log = require('pack-config.log')
 local util = require('pack-config.util')
 local helper = require('pack-config.helper')

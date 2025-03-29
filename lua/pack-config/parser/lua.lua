@@ -14,6 +14,7 @@ local default_cfg = {
 
 local cfg = default_opts
 
+-- config.lazy as default value, effect only when pack.lazy is nil
 local is_lazy = function(lazy_value)
   return pred.is_nil(lazy_value) and cfg.lazy or convert.to_bool(lazy_value)
 end
@@ -145,6 +146,7 @@ M.parse = function(pack)
   subs_flatten_merge(result)
   parse_rely(result.resources)
   -- lazy
+  result.lazy = is_lazy(pack.lazy)
   -- if convert.to_bool(pack.lazy) or cfg.lazy then
   -- if is_lazy(pack.lazy) then
   --   result.setup = fn.with_lazy(result.setup)
