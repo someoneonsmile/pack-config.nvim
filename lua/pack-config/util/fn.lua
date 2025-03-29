@@ -44,7 +44,7 @@ end
 --    - map function -
 -- ----------------------------------------------------------------------
 
-M.orign = function(v)
+M.origin = function(v)
   return v
 end
 

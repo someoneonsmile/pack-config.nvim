@@ -140,6 +140,7 @@ end
 
 -- optional
 -- config run after all pack's setup
+-- and run with vim.schedule
 M.config = function()
   -- use pack fn to load other pack
   local other_pack = pack('other_pack_name')
