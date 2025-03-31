@@ -47,9 +47,7 @@ end
 
 M.is_type = function(types, v)
   ---@diagnostic disable-next-line: redundant-parameter
-  vim.validate {
-    types = { types, { 'string', 'table' } },
-  }
+  vim.validate('types', types, { 'string', 'table' })
 
   if type(types) == 'string' then
     types = { types }
@@ -57,10 +55,10 @@ M.is_type = function(types, v)
 
   local extra_types = {
     list = function(v_extra)
-      return type(v_extra) == 'table' and vim.tbl_islist(v_extra)
+      return type(v_extra) == 'table' and vim.islist(v_extra)
     end,
     map = function(v_extra)
-      return type(v_extra) == 'table' and not vim.tbl_islist(v_extra)
+      return type(v_extra) == 'table' and not vim.islist(v_extra)
     end,
   }
 
