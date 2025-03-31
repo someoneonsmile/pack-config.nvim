@@ -48,9 +48,12 @@ local load = function(scan_paths)
   local block_set = Set.from_list(cfg.block_list)
 
   -- scan lua file
+  Profile.start('pack-config', 'load scan')
   local pack_paths = cfg.scanner.scan(scan_paths)
+  Profile.stop('pack-config', 'load scan')
 
   -- filter valid pack
+  Profile.start('pack-config', 'load parse')
   local valid_packs = {}
   for _, pack_path in ipairs(pack_paths) do
     local ok, pack = enhance.dofile(pack_path, 'bt', cfg.env)
@@ -68,10 +71,16 @@ local load = function(scan_paths)
       end
     end
   end
+  Profile.stop('pack-config', 'load parse')
 
   -- pack istall and config
+  Profile.start('pack-config', 'load regist')
   packer.regist(valid_packs)
+  Profile.stop('pack-config', 'load regist')
+
+  Profile.start('pack-config', 'load done')
   packer.done()
+  Profile.stop('pack-config', 'load done')
 end
 
 -- @param opts
@@ -81,7 +90,7 @@ end
 --  opts.loader_opts: control the loader init action
 --  opts.env: env to pack setup/config
 M.setup = fn.once(function(opts)
-  Profile.start('global', 'total')
+  Profile.start('pack-config', 'total')
 
   cfg = tbl.tbl_force_deep_extend(default_cfg, opts)
   cfg.env.require = enhance.with_env_require(cfg.env)
@@ -95,6 +104,7 @@ M.setup = fn.once(function(opts)
     __newindex = _G,
   })
 
+  Profile.start('pack-config', 'init')
   cfg.scanner = require('pack-config.scanner').with_default(cfg.scanner, false)
   cfg.parser = require('pack-config.parser').with_default(cfg.parser, false)
   cfg.loader = require('pack-config.loader').with_default(cfg.loader, false)
@@ -108,13 +118,16 @@ M.setup = fn.once(function(opts)
   if pd.is_function(cfg.loader.init) then
     cfg.loader.init(cfg.loader_opts)
   end
+  Profile.stop('pack-config', 'init')
+
+  Profile.start('pack-config', 'load total')
   packer.setup {
     loader = cfg.loader,
   }
-
   load(cfg.scan_paths)
+  Profile.stop('pack-config', 'load total')
 
-  Profile.stop('global', 'total')
+  Profile.stop('pack-config', 'total')
 end)
 
 M.version = '0.8.0'

@@ -105,22 +105,29 @@ end
 
 -- 插件管理器注册插件
 M.done = function()
+  Profile.start('pack-config-packer', 'resources distinct')
   local all_resources = tbl.list_distinct(fn.first, tbl.list_extend({}, relys, resources))
   deprecated_tip(all_resources)
+  Profile.stop('pack-config-packer', 'resources distinct')
 
+  Profile.start('pack-config-packer', 'loader load')
   log.debug('pack loader will load :', all_resources)
   loader.load(all_resources)
+  Profile.stop('pack-config-packer', 'loader load')
+
   if regist_packs:is_empty() then
     return
   end
 
   -- topo_sort
+  Profile.start('pack-config-packer', 'load sort')
   local sorter = util.topo_sort:new(function(_, v)
     return v.name
   end, function(v)
     return fn.with_default {}(v.after)
   end)
   local regist_packs_sorted = sorter:sort(regist_packs)
+  Profile.stop('pack-config-packer', 'load sort')
 
   -- deal lazy spread
   for _, pack in ipairs(regist_packs_sorted) do
@@ -131,6 +138,7 @@ M.done = function()
   end
 
   -- call setup() and config()
+  Profile.start('pack-config-packer', 'setup')
   for _, pack in ipairs(regist_packs_sorted) do
     if pd.is_type({ 'function' }, pack.setup) then
       if pack.lazy then
@@ -142,12 +150,16 @@ M.done = function()
       end
     end
   end
+  Profile.stop('pack-config-packer', 'setup')
+
+  Profile.start('pack-config-packer', 'config')
   for _, pack in ipairs(regist_packs_sorted) do
     if pd.is_type({ 'function' }, pack.config) then
       -- config default run in schedule
       vim.schedule(pack.config)
     end
   end
+  Profile.stop('pack-config-packer', 'config')
 end
 
 return M

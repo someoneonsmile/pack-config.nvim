@@ -1,6 +1,7 @@
 local log = require('pack-config.log')
 local util = require('pack-config.util')
 local helper = require('pack-config.helper')
+local Profile = require('pack-config.profile')
 local fn = util.fn
 local tbl = util.tbl
 local Set = util.set
@@ -122,14 +123,17 @@ M.load = function(packs)
     table.insert(packs, { 'folke/lazy.nvim' })
   end
 
+  Profile.start('pack-config-loader', 'not_support_opts_tip')
   not_support_opts_tip(packs)
+  Profile.stop('pack-config-loader', 'not_support_opts_tip')
 
-  lazy.setup(
-    tbl.tbl_map_filter(packs, function(pack)
-      return transform(pack)
-    end),
-    cfg.outer_config
-  )
+  Profile.start('pack-config-loader', 'transform')
+  local transformed = tbl.tbl_map_filter(packs, transform)
+  Profile.stop('pack-config-loader', 'transform')
+
+  Profile.start('pack-config-loader', 'setup')
+  lazy.setup(transformed, cfg.outer_config)
+  Profile.stop('pack-config-loader', 'setup')
 end
 
 return M
