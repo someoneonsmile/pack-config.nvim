@@ -12,8 +12,9 @@ local loader
 
 local M = {}
 
-local regist_packs = Context:new(Const.key.pack_context)
-local relys = {}
+local regist_packs_context = Context:new(Const.key.pack_context)
+local regist_packs = {}
+local relies = {}
 local resources = {}
 local deprecateds = {}
 
@@ -42,46 +43,17 @@ end
 
 -- 注册插件
 M.regist = function(packs)
-  for _, pack in pairs(packs) do
-    local pack_resources = pack.resources
-    tbl.list_extend(relys, collect_rely(pack_resources))
-    tbl.list_extend(resources, pack_resources)
-    deprecateds = tbl.tbl_force_extend(deprecateds, tbl.list_to_map(pack_resources.deprecated, fn.first, fn.origin))
-
-    if pd.is_type({ 'function' }, pack.setup) then
-      local setup_pipe = fn.pipe(
-        fn.with_error_handler(function(msg)
-          log.error(pack.name .. '::setup', msg)
-        end),
-        Profile.with_profile('setup-config', pack.name .. '::setup'),
-        fn.once
-      )(pack.setup)
-      pack.setup = setup_pipe
-    end
-
-    if pd.is_type({ 'function' }, pack.config) then
-      local config_pipe = fn.pipe(
-        fn.with_error_handler(function(msg)
-          log.error(pack.name .. '::config', msg)
-        end),
-        Profile.with_profile('setup-config', pack.name .. '::config'),
-        fn.once
-      )(pack.config)
-      pack.config = config_pipe
-    end
-
-    if regist_packs:get(pack.name) ~= nil then
+  for pack_name, pack in pairs(packs) do
+    if pd.not_nil(regist_packs[pack_name]) then
       error(pack.name .. ' already exists', vim.log.levels.ERROR)
     end
-    regist_packs:set(pack.name, pack)
+    regist_packs[pack_name] = pack
   end
-  relys = tbl.list_distinct(fn.first, relys)
-  resources = tbl.list_distinct(fn.first, resources)
 end
 
 -- 获取 pack
 M.get_pack = function(pack_name)
-  return regist_packs:get(pack_name)
+  return regist_packs_context:get(pack_name)
 end
 
 -- 提示过期插件及替换插件
@@ -105,19 +77,74 @@ end
 
 -- 插件管理器注册插件
 M.done = function()
+  -- 预处理, 依赖的包不存在的场景
+  -- 依赖不存在时, 该包失效
+  regist_packs = tbl.tbl_map_filter(regist_packs, function(pack)
+    for _, after_name in ipairs(pack.after or {}) do
+      if pd.is_nil(regist_packs[after_name]) then
+        log.error(pack.name .. ' after ' .. after_name .. ' that not exists')
+        return
+      end
+    end
+    return pack
+  end)
+
+  if pd.is_empty(regist_packs) then
+    log.error(regist_packs, 'is_empty')
+    return
+  end
+
+  for _, pack in pairs(regist_packs) do
+    -- 收集 resources
+    local pack_resources = pack.resources
+    tbl.list_extend(relies, collect_rely(pack_resources))
+    tbl.list_extend(resources, pack_resources)
+    deprecateds = tbl.tbl_force_extend(deprecateds, tbl.list_to_map(pack_resources.deprecated, fn.first, fn.origin))
+
+    -- 装饰 setup
+    if pd.is_type({ 'function' }, pack.setup) then
+      local setup_pipe = fn.pipe(
+        fn.with_error_handler(function(msg)
+          log.error(pack.name .. '::setup', msg)
+        end),
+        Profile.with_profile('setup-config', pack.name .. '::setup'),
+        fn.once
+      )(pack.setup)
+      pack.setup = setup_pipe
+    end
+
+    -- 装饰 config
+    if pd.is_type({ 'function' }, pack.config) then
+      local config_pipe = fn.pipe(
+        fn.with_error_handler(function(msg)
+          log.error(pack.name .. '::config', msg)
+        end),
+        Profile.with_profile('setup-config', pack.name .. '::config'),
+        fn.once
+      )(pack.config)
+      pack.config = config_pipe
+    end
+
+    -- TODO: use context.set_all
+    if regist_packs_context:get(pack.name) ~= nil then
+      error(pack.name .. ' already exists', vim.log.levels.ERROR)
+    end
+    regist_packs_context:set(pack.name, pack)
+  end
+
+  -- 合并去重 resources
   Profile.start('pack-config-packer', 'resources distinct')
-  local all_resources = tbl.list_distinct(fn.first, tbl.list_extend({}, relys, resources))
+  relies = tbl.list_distinct(fn.first, relies)
+  resources = tbl.list_distinct(fn.first, resources)
+  local all_resources = tbl.list_distinct(fn.first, tbl.list_extend({}, relies, resources))
   deprecated_tip(all_resources)
   Profile.stop('pack-config-packer', 'resources distinct')
 
+  -- loader 加载资源
   Profile.start('pack-config-packer', 'loader load')
   log.debug('pack loader will load :', all_resources)
   loader.load(all_resources)
   Profile.stop('pack-config-packer', 'loader load')
-
-  if regist_packs:is_empty() then
-    return
-  end
 
   -- topo_sort
   Profile.start('pack-config-packer', 'load sort')
@@ -133,7 +160,7 @@ M.done = function()
   for _, pack in ipairs(regist_packs_sorted) do
     pack.lazy = pack.lazy
       or tbl.tbl_reduce(pack.after, false, function(r, v, _k)
-        return r or M.get_pack(v).lazy
+        return r or regist_packs[v].lazy
       end)
   end
 
