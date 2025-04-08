@@ -29,7 +29,7 @@ local default_config = {
     },
     use_notify = {
       enable = true,
-      level = 'info',
+      level = 'warn',
       async = true,
     },
     use_file = {
