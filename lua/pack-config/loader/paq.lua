@@ -77,7 +77,7 @@ local transform = function(pack)
     branch = pack.branch,
     opt = pack.opt,
     pin = pack.pin,
-    run = pack.run,
+    build = pack.run,
   }
 end
 
