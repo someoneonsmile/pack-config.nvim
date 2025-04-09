@@ -41,7 +41,7 @@ M.init = fn.once(function(opts)
         'Download paq fail'
       )
 
-      vim.opt.rtp:prepend(Const.path.init_pack .. 'pqa')
+      vim.opt.rtp:prepend(Const.path.init_pack .. 'paq')
       -- vim.cmd([[qa]])
     else
       error('not find paq-nvim')
