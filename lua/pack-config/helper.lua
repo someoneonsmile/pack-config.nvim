@@ -27,9 +27,15 @@ M.download_pack = function(pack)
     pack.dist_dir = pack.dist_dir .. '/'
   end
   if pack.prompt and M.answer(pack.prompt .. ' [y/N]: ') then
-    log.info(string.format('git clone https://github.com/%s.git %s', pack.path, pack.dist_dir .. pack.name))
-    local out =
-      vim.fn.system(string.format('git clone https://github.com/%s.git %s', pack.path, pack.dist_dir .. pack.name))
+    local clone_cmd = {
+      'git',
+      'clone',
+      '--filter=blob:none',
+      string.format('https://github.com/%s.git', pack.path),
+      pack.dist_dir .. pack.name,
+    }
+    log.info(clone_cmd)
+    local out = vim.fn.system(clone_cmd)
     log.info(out)
     local r = vim.v.shell_error == 0
     if r and pack.temp then
