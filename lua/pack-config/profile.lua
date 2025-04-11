@@ -7,7 +7,7 @@ local tbl = util.tbl
 
 local this = {
   clock = function()
-    return vim.loop.hrtime() / 1000000
+    return vim.uv.hrtime() / 1000000
   end,
   context = Context:new(Const.key.profile),
 }

@@ -17,7 +17,7 @@ require('pack-config').setup {
   loader_opts = {},
   -- optional
   -- default to select from the order list [uv, fd] if exists
-  -- uv: which use vim.loop.fs_scandir
+  -- uv: which use vim.uv.fs_scandir
   -- fd: which use the cli fd
   scanner = require('pack-config.scanner.uv'),
   -- optional
