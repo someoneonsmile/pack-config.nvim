@@ -42,5 +42,6 @@ describe('util tbl test', function()
     local list_extend = tbl.list_extend
     assert.same({ 1 }, list_extend(nil, { 1 }))
     assert.same({ 1, '1' }, list_extend(nil, { 1 }, { '1' }))
+    assert.same({ 1, 2, 3 }, list_extend(nil, { 1, 2 }, { 3 }))
   end)
 end)

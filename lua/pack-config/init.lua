@@ -67,7 +67,7 @@ local load = function(scan_paths)
       if Set.contains(block_set, parsed_pack.name) then
         log.debug('block pack: ', parsed_pack.name)
       else
-        valid_packs[parsed_pack.name] = parsed_pack
+        table.insert(valid_packs, parsed_pack)
       end
     end
   end
