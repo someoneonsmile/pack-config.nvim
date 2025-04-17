@@ -63,8 +63,8 @@ M.sort_iter = function(self, tbl)
     graph[name] = graph[name] or { in_link = {}, out_link = {} }
     local pres = self.pre_extractor(v)
     -- 如果依赖已经在前面了, 直接去掉
-    pres = vim.tbl_filter(function(v)
-      return refs[v] == nil
+    pres = vim.tbl_filter(function(pre)
+      return refs[pre] == nil
     end, pres or {})
     if #pres > 0 then
       for _, pre in ipairs(pres) do
@@ -115,8 +115,8 @@ M.sort = function(self, tbl)
     graph[name] = graph[name] or { in_link = {}, out_link = {} }
     local pres = self.pre_extractor(v)
     -- 如果依赖已经在前面了, 直接去掉
-    pres = vim.tbl_filter(function(v)
-      return refs[v] == nil
+    pres = vim.tbl_filter(function(pre)
+      return refs[pre] == nil
     end, pres or {})
     if #pres > 0 then
       for _, pre in ipairs(pres) do
