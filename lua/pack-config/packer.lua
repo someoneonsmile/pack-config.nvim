@@ -13,8 +13,8 @@ local loader
 local M = {}
 
 local regist_packs_context = Context:new(Const.key.pack_context)
+local regist_pack_map = {}
 local regist_packs = {}
-local relies = {}
 local resources = {}
 local deprecateds = {}
 
@@ -43,12 +43,14 @@ end
 
 -- 注册插件
 M.regist = function(packs)
-  for pack_name, pack in pairs(packs) do
-    if pd.not_nil(regist_packs[pack_name]) then
-      error(pack.name .. ' already exists', vim.log.levels.ERROR)
+  for _, pack in pairs(packs) do
+    local pack_name = pack.name
+    if pd.not_nil(regist_pack_map[pack_name]) then
+      error(pack_name .. ' already exists', vim.log.levels.ERROR)
     end
-    regist_packs[pack_name] = pack
+    regist_pack_map[pack_name] = pack
   end
+  tbl.list_extend(regist_packs, packs)
 end
 
 -- 获取 pack
@@ -79,10 +81,19 @@ end
 M.done = function()
   -- 预处理, 依赖的包不存在的场景
   -- 依赖不存在时, 该包失效
+  -- 另一种处理方式把该依赖从依赖列表中删去
   regist_packs = tbl.tbl_map_filter(regist_packs, function(pack)
     for _, after_name in ipairs(pack.after or {}) do
-      if pd.is_nil(regist_packs[after_name]) then
+      if pd.is_nil(regist_pack_map[after_name]) then
         log.error(pack.name .. ' after ' .. after_name .. ' that not exists')
+        return
+      end
+    end
+    return pack
+  end)
+  regist_pack_map = tbl.tbl_map_filter(regist_pack_map, function(pack)
+    for _, after_name in ipairs(pack.after or {}) do
+      if pd.is_nil(regist_pack_map[after_name]) then
         return
       end
     end
@@ -90,14 +101,26 @@ M.done = function()
   end)
 
   if pd.is_empty(regist_packs) then
-    log.error(regist_packs, 'is_empty')
+    -- log.debug('regist_packs is_empty')
     return
   end
 
-  for _, pack in pairs(regist_packs) do
+  -- topo_sort
+  Profile.start('pack-config-packer', 'load sort')
+  local sorter = util.topo_sort:new(function(_, v)
+    return v.name
+  end, function(v)
+    return fn.with_default {}(v.after)
+  end)
+  local regist_packs_sorted = sorter:sort(regist_packs)
+  log.debug('regist_packs_sorted', regist_packs_sorted)
+  Profile.stop('pack-config-packer', 'load sort')
+
+  -- 遍历 regist_packs
+  for _, pack in pairs(regist_packs_sorted) do
     -- 收集 resources
     local pack_resources = pack.resources
-    tbl.list_extend(relies, collect_rely(pack_resources))
+    tbl.list_extend(resources, collect_rely(pack_resources))
     tbl.list_extend(resources, pack_resources)
     deprecateds = tbl.tbl_force_extend(deprecateds, tbl.list_to_map(pack_resources.deprecated, fn.first, fn.origin))
 
@@ -134,33 +157,21 @@ M.done = function()
 
   -- 合并去重 resources
   Profile.start('pack-config-packer', 'resources distinct')
-  relies = tbl.list_distinct(fn.first, relies)
   resources = tbl.list_distinct(fn.first, resources)
-  local all_resources = tbl.list_distinct(fn.first, tbl.list_extend({}, relies, resources))
-  deprecated_tip(all_resources)
+  deprecated_tip(resources)
   Profile.stop('pack-config-packer', 'resources distinct')
 
   -- loader 加载资源
   Profile.start('pack-config-packer', 'loader load')
-  log.debug('pack loader will load :', all_resources)
-  loader.load(all_resources)
+  log.debug('pack loader will load :', resources)
+  loader.load(resources)
   Profile.stop('pack-config-packer', 'loader load')
-
-  -- topo_sort
-  Profile.start('pack-config-packer', 'load sort')
-  local sorter = util.topo_sort:new(function(_, v)
-    return v.name
-  end, function(v)
-    return fn.with_default {}(v.after)
-  end)
-  local regist_packs_sorted = sorter:sort(regist_packs)
-  Profile.stop('pack-config-packer', 'load sort')
 
   -- deal lazy spread
   for _, pack in ipairs(regist_packs_sorted) do
     pack.lazy = pack.lazy
       or tbl.tbl_reduce(pack.after, false, function(r, v, _k)
-        return r or regist_packs[v].lazy
+        return r or regist_pack_map[v].lazy
       end)
   end
 

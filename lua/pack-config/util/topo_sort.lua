@@ -28,7 +28,9 @@ local function print_circle_graph(graph)
     end
     return r
   end
+  -- TODO:
   local function print_circle(name)
+    -- TODO: name can be nil
     local i = tbl_index(paths, name)
     if i then
       log.warn('Circle detected, path:', table.concat(tbl_slice(paths, i, #paths), ' -> '))
@@ -60,7 +62,11 @@ M.sort_iter = function(self, tbl)
     refs[name] = v
     graph[name] = graph[name] or { in_link = {}, out_link = {} }
     local pres = self.pre_extractor(v)
-    if pres ~= nil and #pres > 0 then
+    -- 如果依赖已经在前面了, 直接去掉
+    pres = vim.tbl_filter(function(pre)
+      return refs[pre] == nil
+    end, pres or {})
+    if #pres > 0 then
       for _, pre in ipairs(pres) do
         graph[pre] = graph[pre] or { in_link = {}, out_link = {} }
         graph[name].in_link[pre] = true
@@ -76,7 +82,7 @@ M.sort_iter = function(self, tbl)
   -- @return name, pack
   return function()
     if next(heads) ~= nil then
-      local head = table.remove(heads)
+      local head = table.remove(heads, 1)
       for _, out_link in ipairs(graph[head].out_link) do
         graph[out_link].in_link[head] = nil
         if next(graph[out_link].in_link) == nil then
@@ -108,7 +114,11 @@ M.sort = function(self, tbl)
     refs[name] = v
     graph[name] = graph[name] or { in_link = {}, out_link = {} }
     local pres = self.pre_extractor(v)
-    if pres ~= nil and #pres > 0 then
+    -- 如果依赖已经在前面了, 直接去掉
+    pres = vim.tbl_filter(function(pre)
+      return refs[pre] == nil
+    end, pres or {})
+    if #pres > 0 then
       for _, pre in ipairs(pres) do
         graph[pre] = graph[pre] or { in_link = {}, out_link = {} }
         graph[name].in_link[pre] = true
@@ -121,7 +131,7 @@ M.sort = function(self, tbl)
 
   local result = {}
   while next(heads) ~= nil do
-    local head = table.remove(heads)
+    local head = table.remove(heads, 1)
     for _, out_link in ipairs(graph[head].out_link) do
       graph[out_link].in_link[head] = nil
       if next(graph[out_link].in_link) == nil then
