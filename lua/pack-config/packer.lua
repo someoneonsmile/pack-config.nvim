@@ -15,7 +15,7 @@ local M = {}
 local regist_packs_context = Context:new(Const.key.pack_context)
 local regist_pack_map = {}
 local regist_packs = {}
-local resources = {}
+local resources = { { Const.self_pack_name } }
 local deprecateds = {}
 
 -- 收集依赖

@@ -13,4 +13,6 @@ M.path = {
   init_pack_opt = vim.fn.stdpath('data') .. '/site/pack/init/opt/',
 }
 
+M.self_pack_name = 'someoneonsmile/pack-config.nvim'
+
 return M
