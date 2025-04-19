@@ -81,7 +81,7 @@ end
 M.done = function()
   -- 预处理, 依赖的包不存在的场景
   -- 依赖不存在时, 该包失效
-  -- 另一种处理方式把该依赖从依赖列表中删去
+  -- (把该依赖从依赖列表中删去, 不合适, 因为依赖项缺失, 留着也会报错)
   regist_packs = tbl.tbl_map_filter(regist_packs, function(pack)
     for _, after_name in ipairs(pack.after or {}) do
       if pd.is_nil(regist_pack_map[after_name]) then
