@@ -8,7 +8,6 @@ local Set = util.set
 
 local default_cfg = {
   auto_download = true,
-  pack_self = false,
   outer_config = {},
 }
 
@@ -118,10 +117,7 @@ M.load = function(packs)
   end
 
   packs = packs or {}
-
-  if cfg.pack_self then
-    table.insert(packs, { 'folke/lazy.nvim' })
-  end
+  table.insert(packs, { 'folke/lazy.nvim' })
 
   Profile.start('pack-config-loader', 'not_support_opts_tip')
   not_support_opts_tip(packs)

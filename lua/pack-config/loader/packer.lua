@@ -8,7 +8,6 @@ local Set = util.set
 
 local default_cfg = {
   auto_download = true,
-  pack_self = true,
   outer_config = {},
 }
 
@@ -118,11 +117,7 @@ M.load = function(packs)
   end
 
   packs = packs or {}
-
-  if cfg.pack_self then
-    table.insert(packs, { 'wbthomason/packer.nvim' })
-  end
-
+  table.insert(packs, { 'wbthomason/packer.nvim' })
   not_support_opts_tip(packs)
 
   packer.startup(function(use)

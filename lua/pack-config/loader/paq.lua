@@ -8,7 +8,6 @@ local Set = util.set
 
 local default_cfg = {
   auto_download = true,
-  pack_self = true,
   package = 'paqs',
 }
 
@@ -109,11 +108,9 @@ M.load = function(packs)
   end
 
   packs = packs or {}
-
-  if cfg.pack_self then
-    table.insert(packs, { 'savq/paq-nvim' })
-  end
+  table.insert(packs, { 'savq/paq-nvim' })
   not_support_opts_tip(packs)
+
   paq(vim.tbl_map(transform, packs))
 end
 
