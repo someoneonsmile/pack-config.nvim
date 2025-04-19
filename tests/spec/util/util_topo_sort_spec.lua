@@ -41,7 +41,7 @@ describe('util topo_sort test', function()
       return fn.with_default {}(v.after)
     end)
     assert.same(
-      { { '1' }, { '3' }, { '4' }, { '5' }, { '2', after = { '3' } } },
+      { { '1' }, { '3' }, { '2', after = { '3' } }, { '4' }, { '5' } },
       sorter:sort { { '1' }, { '2', after = { '3' } }, { '3' }, { '4' }, { '5' } }
     )
   end)

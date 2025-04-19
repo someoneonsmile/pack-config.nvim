@@ -1,4 +1,6 @@
 local log = require('pack-config.log')
+local util = require('pack-config.util')
+local sorter = util.sort
 local M = {}
 
 M.new = function(self, key_extractor, pre_extractor)
@@ -57,9 +59,13 @@ M.sort_iter = function(self, tbl)
   local refs = {}
   local graph = {}
   local heads = {}
-  for k, v in pairs(tbl) do
-    local name = self.key_extractor(k, v)
+  local origin_orders = {}
+
+  -- 构建依赖图
+  for i, v in ipairs(tbl) do
+    local name = self.key_extractor(i, v)
     refs[name] = v
+    origin_orders[name] = i
     graph[name] = graph[name] or { in_link = {}, out_link = {} }
     local pres = self.pre_extractor(v)
     -- 如果依赖已经在前面了, 直接去掉
@@ -87,6 +93,9 @@ M.sort_iter = function(self, tbl)
         graph[out_link].in_link[head] = nil
         if next(graph[out_link].in_link) == nil then
           table.insert(heads, out_link)
+          sorter.sort(heads, function(it)
+            return origin_orders[it]
+          end)
         end
       end
       graph[head] = nil
@@ -109,9 +118,13 @@ M.sort = function(self, tbl)
   local refs = {}
   local graph = {}
   local heads = {}
-  for k, v in pairs(tbl) do
-    local name = self.key_extractor(k, v)
+  local origin_orders = {}
+
+  -- 构建依赖图
+  for i, v in ipairs(tbl) do
+    local name = self.key_extractor(i, v)
     refs[name] = v
+    origin_orders[name] = i
     graph[name] = graph[name] or { in_link = {}, out_link = {} }
     local pres = self.pre_extractor(v)
     -- 如果依赖已经在前面了, 直接去掉
@@ -136,6 +149,9 @@ M.sort = function(self, tbl)
       graph[out_link].in_link[head] = nil
       if next(graph[out_link].in_link) == nil then
         table.insert(heads, out_link)
+        sorter.sort(heads, function(it)
+          return origin_orders[it]
+        end)
       end
     end
     graph[head] = nil
