@@ -4,6 +4,7 @@ local builtin_loaders = function()
     require('pack-config.loader.packer'),
     require('pack-config.loader.lazy'),
     require('pack-config.loader.paq'),
+    require('pack-config.loader.vimpack'),
   }
 end
 
