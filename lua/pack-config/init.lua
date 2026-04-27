@@ -130,6 +130,6 @@ M.setup = fn.once(function(opts)
   Profile.stop('pack-config', 'total')
 end)
 
-M.version = '0.8.0'
+M.version = '0.9.5'
 
 return M

@@ -73,6 +73,8 @@ M.subs = {
         branch = '',
         tag = '',
         commit = '',
+        -- version constraint, e.g. '>= 1.0.0' (supported by lazy.nvim)
+        version = '',
         -- lock, skip updating this plugin
         pin = false,
         -- manually marks a plugin as optional
@@ -107,6 +109,8 @@ M.resources = function()
       branch = '',
       tag = '',
       commit = '',
+      -- version constraint, e.g. '>= 1.0.0' (supported by lazy.nvim)
+      version = '',
       -- lock, skip updating this plugin
       pin = false,
       -- manually marks a plugin as optional
@@ -184,6 +188,7 @@ M.resources = {
     branch = '',
     tag = '',
     commit = '',
+    version = '',
     pin = false,
     opt = false,
     run = function() end,
@@ -198,6 +203,7 @@ M.resources = {
     branch = '',
     tag = '',
     commit = '',
+    version = '',
     pin = false,
     opt = true,
     run = function() end,

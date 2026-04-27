@@ -73,6 +73,8 @@ M.subs = {
         branch = '',
         tag = '',
         commit = '',
+        -- version 约束, 例如 '>= 1.0.0' (lazy.nvim 支持)
+        version = '',
         -- lock, 跳过更新此插件
         pin = false,
         -- 手动标记为可选
@@ -107,6 +109,8 @@ M.resources = function()
       branch = '',
       tag = '',
       commit = '',
+      -- version 约束, 例如 '>= 1.0.0' (lazy.nvim 支持)
+      version = '',
       -- lock, 跳过更新此插件
       pin = false,
       -- 手动标记为可选
@@ -184,6 +188,7 @@ M.resources = {
     branch = '',
     tag = '',
     commit = '',
+    version = '',
     pin = false,
     opt = false,
     run = function() end,
@@ -198,6 +203,7 @@ M.resources = {
     branch = '',
     tag = '',
     commit = '',
+    version = '',
     pin = false,
     opt = true,
     run = function() end,
