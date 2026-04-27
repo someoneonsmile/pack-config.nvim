@@ -149,7 +149,7 @@ local endpoint_handles = {
       return endpoint_config and endpoint_config.enable and log_level >= config.levels[endpoint_config.level]
     end,
     handle = function(config, level_config, msg, lineinfo, info)
-      local outfile = string.format('%s/%s.log', vim.fn.stdpath('cache'), config.plugin)
+      local outfile = string.format('%s/%s.log', vim.fn.stdpath('state') .. '/logs' , config.plugin)
       local fp = assert(io.open(outfile, 'a'))
       local str = string.format('[%-6s%s] %s: %s\n', level_config.name:upper(), os.date(), lineinfo, msg)
       fp:write(str)
