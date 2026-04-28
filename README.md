@@ -73,7 +73,7 @@ M.subs = {
         branch = '',
         tag = '',
         commit = '',
-        -- version constraint, e.g. '>= 1.0.0' (supported by lazy.nvim)
+        -- version constraint, e.g. '>= 1.0.0' (supported by lazy.nvim, vim.pack)
         version = '',
         -- lock, skip updating this plugin
         pin = false,
@@ -109,7 +109,7 @@ M.resources = function()
       branch = '',
       tag = '',
       commit = '',
-      -- version constraint, e.g. '>= 1.0.0' (supported by lazy.nvim)
+      -- version constraint, e.g. '>= 1.0.0' (supported by lazy.nvim, vim.pack)
       version = '',
       -- lock, skip updating this plugin
       pin = false,

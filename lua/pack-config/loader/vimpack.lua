@@ -67,7 +67,7 @@ local transform = function(pack)
   return {
     src = cfg.url_format(src),
     name = pack.as,
-    version = pack.branch or pack.commit or pack.tag,
+    version = pack.branch or pack.commit or pack.tag or pack.version and vim.version.range(pack.version),
     data = { run = pack_run, build = pack_build },
   }
 end
@@ -80,6 +80,7 @@ local not_support_opts_tip = function(packs)
     'branch',
     'tag',
     'commit',
+    'version',
     -- 'pin',
     -- 'opt',
     'run',
@@ -89,7 +90,7 @@ local not_support_opts_tip = function(packs)
     tips = tips .. Set.different(Set.from_map(pack), support_opts)
   end
   if Set.is_notempty(tips) then
-    log.warn('paq not support opts', tips)
+    log.warn('vim pack not support opts', tips)
   end
 end
 

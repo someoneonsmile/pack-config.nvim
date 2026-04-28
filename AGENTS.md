@@ -302,10 +302,11 @@ lua/pack-config/
 │   ├── tbl.lua        -- Table utilities
 │   ├── set.lua        -- Set operations
 │   └── ...
-└── loader/            -- Loaders (packer, lazy, paq)
+└── loader/            -- Loaders (packer, lazy, paq, vimpack)
     ├── packer.lua
     ├── lazy.lua
-    └── paq.lua
+    ├── paq.lua
+    └── vimpack.lua
 ```
 
 ---
